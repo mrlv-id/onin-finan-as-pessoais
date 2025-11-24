@@ -157,7 +157,7 @@ const AllAccounts = () => {
             Nenhuma conta cadastrada
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {accounts.map((account) => (
               <AccountItem
                 key={account.id}
