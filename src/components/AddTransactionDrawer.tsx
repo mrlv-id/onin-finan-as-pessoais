@@ -148,7 +148,7 @@ const AddTransactionDrawer = ({ open, onOpenChange }: AddTransactionDrawerProps)
 
               <div className="space-y-2">
                 <Label>Categoria</Label>
-                <div className="grid grid-cols-5 gap-2">
+                <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4">
                   {categories.map((cat) => {
                     const Icon = cat.icon;
                     return (
@@ -156,7 +156,7 @@ const AddTransactionDrawer = ({ open, onOpenChange }: AddTransactionDrawerProps)
                         key={cat.value}
                         type="button"
                         onClick={() => setCategory(cat.value)}
-                        className={`flex flex-col items-center justify-center p-3 rounded-lg border transition-all ${
+                        className={`flex flex-col items-center justify-center p-3 rounded-lg border transition-all flex-shrink-0 w-20 ${
                           category === cat.value
                             ? "bg-primary text-primary-foreground border-primary"
                             : "bg-background hover:bg-accent"
