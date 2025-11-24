@@ -162,9 +162,9 @@ const Landing = () => {
               size="lg"
               variant="outline"
               className="h-12 sm:h-14 px-6 sm:px-8 text-sm sm:text-base font-medium rounded-2xl w-full sm:min-w-[200px] bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/install")}
             >
-              Já tenho conta
+              Instalar App
             </Button>
           </div>
         </div>
@@ -172,8 +172,16 @@ const Landing = () => {
 
       {/* Footer */}
       <footer className="py-6 sm:py-8 px-4 sm:px-6 border-t">
-        <div className="container max-w-6xl mx-auto text-center text-xs sm:text-sm text-muted-foreground">
-          <p>© 2024 Onin. Suas finanças na palma da sua mão.</p>
+        <div className="container max-w-6xl mx-auto text-center space-y-3">
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            © 2024 Onin. Suas finanças na palma da sua mão.
+          </p>
+          <button 
+            onClick={() => navigate("/login")}
+            className="text-xs sm:text-sm text-muted-foreground hover:text-foreground underline transition-colors"
+          >
+            Já tem conta? Faça login
+          </button>
         </div>
       </footer>
     </div>
