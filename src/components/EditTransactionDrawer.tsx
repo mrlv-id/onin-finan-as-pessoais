@@ -32,8 +32,8 @@ import {
 
 const incomeCategories = [
   { value: "salary", label: "Salário", icon: Briefcase },
-  { value: "freelance", label: "Freelancer", icon: Laptop },
-  { value: "investment", label: "Investimento", icon: Gift },
+  { value: "freelance", label: "Freela", icon: Laptop },
+  { value: "investment", label: "Invest", icon: Gift },
   { value: "other_income", label: "Outros", icon: MoreHorizontal },
 ];
 

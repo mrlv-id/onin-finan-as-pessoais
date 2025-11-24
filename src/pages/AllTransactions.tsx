@@ -134,8 +134,8 @@ const AllTransactions = () => {
 
   const allCategories = [
     { value: "salary", label: "Salário" },
-    { value: "freelance", label: "Freelancer" },
-    { value: "investment", label: "Investimento" },
+    { value: "freelance", label: "Freela" },
+    { value: "investment", label: "Invest" },
     { value: "other_income", label: "Outros (Receita)" },
     { value: "food", label: "Comida" },
     { value: "transport", label: "Transport" },
