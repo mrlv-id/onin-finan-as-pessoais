@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import AccountCard from "@/components/AccountCard";
+import AccountItem from "@/components/AccountItem";
 import { useToast } from "@/hooks/use-toast";
 import { sortAccountsByDueDate, FixedAccountWithDays } from "@/lib/accountUtils";
 
@@ -139,9 +139,9 @@ const AllAccounts = () => {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-3">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="h-32 bg-muted animate-pulse rounded-lg" />
+              <div key={i} className="h-24 bg-muted animate-pulse rounded-lg" />
             ))}
           </div>
         ) : accounts.length === 0 ? (
@@ -149,9 +149,9 @@ const AllAccounts = () => {
             Nenhuma conta cadastrada
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-3">
             {accounts.map((account) => (
-              <AccountCard
+              <AccountItem
                 key={account.id}
                 id={account.id}
                 name={account.name}
