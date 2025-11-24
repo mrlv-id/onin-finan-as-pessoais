@@ -145,13 +145,13 @@ const AddAccountDrawer = ({ open, onOpenChange }: AddAccountDrawerProps) => {
                     key={cat.value}
                     type="button"
                     onClick={() => setCategory(cat.value)}
-                    className={`flex flex-col items-center justify-center p-3 rounded-lg border transition-all flex-shrink-0 w-20 ${
+                    className={`flex flex-col items-center justify-center p-2 rounded-lg border transition-all flex-shrink-0 w-16 ${
                       category === cat.value
                         ? "bg-primary text-primary-foreground border-primary"
                         : "bg-background hover:bg-accent"
                     }`}
                   >
-                    <Icon className="w-6 h-6 mb-1" />
+                    <Icon className="w-5 h-5 mb-1" />
                     <span className="text-xs">{cat.label}</span>
                   </button>
                 );
