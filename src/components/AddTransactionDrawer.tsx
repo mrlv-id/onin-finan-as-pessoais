@@ -108,15 +108,15 @@ const AddTransactionDrawer = ({ open, onOpenChange }: AddTransactionDrawerProps)
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[50vh]">
-        <DrawerHeader>
+      <DrawerContent className="max-h-[50vh] flex flex-col">
+        <DrawerHeader className="flex-shrink-0">
           <DrawerTitle>Adicionar Transação</DrawerTitle>
           <DrawerDescription>
             Adicione uma nova receita ou despesa
           </DrawerDescription>
         </DrawerHeader>
 
-        <div className="px-4 pb-4">
+        <div className="flex-1 overflow-y-auto px-4 pb-4">
           <Tabs value={type} onValueChange={(v) => setType(v as "income" | "expense")} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-4">
               <TabsTrigger value="income">Receita</TabsTrigger>
@@ -183,14 +183,14 @@ const AddTransactionDrawer = ({ open, onOpenChange }: AddTransactionDrawerProps)
                 </div>
               </div>
 
-              <DrawerFooter className="px-0">
-                <Button type="submit" disabled={loading || !category}>
+              <div className="pt-4">
+                <Button type="submit" disabled={loading || !category} className="w-full">
                   {loading ? "Salvando..." : "Salvar Transação"}
                 </Button>
                 <DrawerClose asChild>
-                  <Button variant="outline">Cancelar</Button>
+                  <Button variant="outline" className="w-full mt-2">Cancelar</Button>
                 </DrawerClose>
-              </DrawerFooter>
+              </div>
             </form>
           </Tabs>
         </div>

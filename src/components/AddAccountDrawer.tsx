@@ -88,15 +88,15 @@ const AddAccountDrawer = ({ open, onOpenChange }: AddAccountDrawerProps) => {
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[50vh]">
-        <DrawerHeader>
+      <DrawerContent className="max-h-[50vh] flex flex-col">
+        <DrawerHeader className="flex-shrink-0">
           <DrawerTitle>Adicionar Conta Fixa</DrawerTitle>
           <DrawerDescription>
             Adicione uma nova conta que se repete mensalmente
           </DrawerDescription>
         </DrawerHeader>
 
-        <form onSubmit={handleSubmit} className="px-4 pb-4 space-y-4">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-4 pb-4 space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Nome da conta</Label>
             <Input
@@ -159,14 +159,14 @@ const AddAccountDrawer = ({ open, onOpenChange }: AddAccountDrawerProps) => {
             </div>
           </div>
 
-          <DrawerFooter className="px-0">
-            <Button type="submit" disabled={loading || !category}>
+          <div className="pt-4">
+            <Button type="submit" disabled={loading || !category} className="w-full">
               {loading ? "Salvando..." : "Salvar Conta"}
             </Button>
             <DrawerClose asChild>
-              <Button variant="outline">Cancelar</Button>
+              <Button variant="outline" className="w-full mt-2">Cancelar</Button>
             </DrawerClose>
-          </DrawerFooter>
+          </div>
         </form>
       </DrawerContent>
     </Drawer>
