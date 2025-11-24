@@ -3,12 +3,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import FAB from "@/components/FAB";
-import TransactionItem from "@/components/TransactionItem";
+import SwipeableTransactionItem from "@/components/SwipeableTransactionItem";
 import EditTransactionDrawer from "@/components/EditTransactionDrawer";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   AlertDialog,
@@ -205,34 +205,23 @@ const AllTransactions = () => {
         ) : (
           <div className="space-y-2">
             {filteredTransactions.map((transaction) => (
-              <div key={transaction.id} className="relative group">
-                <div onClick={() => handleEdit(transaction)} className="cursor-pointer">
-                  <TransactionItem
-                    name={transaction.name}
-                    amount={transaction.amount}
-                    category={transaction.category as any}
-                    type={transaction.type}
-                    date={transaction.date}
-                  />
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute top-1/2 right-2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    confirmDelete(transaction.id);
-                  }}
-                >
-                  <Trash2 className="w-4 h-4 text-destructive" />
-                </Button>
-              </div>
+              <SwipeableTransactionItem
+                key={transaction.id}
+                id={transaction.id}
+                name={transaction.name}
+                amount={transaction.amount}
+                category={transaction.category as any}
+                type={transaction.type}
+                date={transaction.date}
+                onEdit={() => handleEdit(transaction)}
+                onDelete={() => confirmDelete(transaction.id)}
+              />
             ))}
           </div>
         )}
 
         <p className="text-sm text-center text-muted-foreground pt-4">
-          Toque em uma transação para editar ou use o ícone de lixeira para excluir
+          Arraste uma transação para a esquerda para editar ou excluir
         </p>
       </div>
 
