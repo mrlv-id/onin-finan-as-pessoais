@@ -3,14 +3,27 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import FAB from "@/components/FAB";
+import AccountItem from "@/components/AccountItem";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/hooks/use-toast";
+
+interface FixedAccount {
+  id: string;
+  name: string;
+  amount: number;
+  category: string;
+  due_day: number;
+  is_active: boolean;
+}
 
 const Wallet = () => {
   const navigate = useNavigate();
   const [period, setPeriod] = useState("7");
   const [totalBalance, setTotalBalance] = useState(0);
+  const [accounts, setAccounts] = useState<FixedAccount[]>([]);
+  const { toast } = useToast();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -73,6 +86,84 @@ const Wallet = () => {
     };
   }, [period]);
 
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { data } = await supabase
+        .from("fixed_accounts")
+        .select("*")
+        .eq("user_id", session.user.id)
+        .order("due_day", { ascending: true });
+
+      if (data) {
+        setAccounts(data as FixedAccount[]);
+      }
+    };
+
+    fetchAccounts();
+
+    const channel = supabase
+      .channel("fixed-accounts-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "fixed_accounts",
+        },
+        () => {
+          fetchAccounts();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const handleToggleActive = async (id: string, isActive: boolean) => {
+    const { error } = await supabase
+      .from("fixed_accounts")
+      .update({ is_active: isActive })
+      .eq("id", id);
+
+    if (error) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível atualizar a conta",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: isActive ? "Conta ativada" : "Conta pausada",
+        description: isActive ? "A conta foi reativada" : "A conta foi pausada",
+      });
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    const { error } = await supabase
+      .from("fixed_accounts")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível excluir a conta",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Conta excluída",
+        description: "A conta foi removida com sucesso",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen pb-20">
       <div className="container max-w-md mx-auto px-6 pt-8 space-y-8 animate-fade-in">
@@ -107,9 +198,27 @@ const Wallet = () => {
             </Button>
           </div>
 
-          <div className="text-center py-12 text-muted-foreground">
-            Nenhuma conta cadastrada
-          </div>
+          {accounts.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              Nenhuma conta cadastrada
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {accounts.map((account) => (
+                <AccountItem
+                  key={account.id}
+                  id={account.id}
+                  name={account.name}
+                  amount={Number(account.amount)}
+                  category={account.category as any}
+                  dueDay={account.due_day}
+                  isActive={account.is_active}
+                  onToggleActive={handleToggleActive}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
