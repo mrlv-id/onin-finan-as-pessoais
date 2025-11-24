@@ -13,18 +13,14 @@ import { signOut } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 const Profile = () => {
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
-  const {
-    theme,
-    setTheme
-  } = useTheme();
+  const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
+  const { isEnabled: pushEnabled, toggle: togglePush } = usePushNotifications();
   const [user, setUser] = useState<User | null>(null);
   const [name, setName] = useState("");
-  const [pushEnabled, setPushEnabled] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   useEffect(() => {
     const checkAuth = async () => {
@@ -39,11 +35,6 @@ const Profile = () => {
       }
       setUser(session.user);
       setName(session.user.user_metadata?.name || "");
-      
-      // Check if push notifications are enabled
-      if ('Notification' in window && Notification.permission === 'granted') {
-        setPushEnabled(true);
-      }
     };
     checkAuth();
     const {
@@ -85,45 +76,6 @@ const Profile = () => {
       });
     } finally {
       setIsSaving(false);
-    }
-  };
-
-  const handleTogglePushNotifications = async () => {
-    if (!user) return;
-
-    if (!('Notification' in window)) {
-      toast({
-        title: "Não suportado",
-        description: "Seu navegador não suporta notificações push.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (pushEnabled) {
-      // Disable notifications
-      setPushEnabled(false);
-      toast({
-        title: "Notificações desativadas",
-        description: "Você não receberá mais lembretes de vencimento.",
-      });
-    } else {
-      // Request permission and enable notifications
-      const permission = await Notification.requestPermission();
-      
-      if (permission === 'granted') {
-        setPushEnabled(true);
-        toast({
-          title: "Notificações ativadas",
-          description: "Você receberá lembretes quando suas contas estiverem próximas do vencimento.",
-        });
-      } else {
-        toast({
-          title: "Permissão negada",
-          description: "Você precisa permitir notificações nas configurações do navegador.",
-          variant: "destructive",
-        });
-      }
     }
   };
 
@@ -178,7 +130,7 @@ const Profile = () => {
                 Receba lembretes quando suas contas estiverem próximas do vencimento
               </p>
             </div>
-            <Switch checked={pushEnabled} onCheckedChange={handleTogglePushNotifications} />
+            <Switch checked={pushEnabled} onCheckedChange={togglePush} />
           </div>
 
           <Button variant="outline" className="w-full h-12" onClick={handleLogout}>
