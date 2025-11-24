@@ -63,7 +63,7 @@ const AddAccount = () => {
         title: "Conta criada",
         description: "Conta fixa adicionada com sucesso",
       });
-      navigate("/wallet");
+      navigate("/dashboard");
     }
 
     setLoading(false);
@@ -76,7 +76,7 @@ const AddAccount = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/dashboard")}
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
@@ -159,7 +159,7 @@ const AddAccount = () => {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => navigate(-1)}
+                onClick={() => navigate("/dashboard")}
                 className="w-full"
               >
                 Cancelar
