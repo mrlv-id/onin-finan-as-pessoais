@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import FAB from "@/components/FAB";
-import AccountItem from "@/components/AccountItem";
+import AccountCard from "@/components/AccountCard";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -219,9 +219,9 @@ const Wallet = () => {
               Nenhuma conta cadastrada
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-3">
               {accounts.map((account) => (
-                <AccountItem
+                <AccountCard
                   key={account.id}
                   id={account.id}
                   name={account.name}
