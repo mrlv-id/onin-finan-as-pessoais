@@ -1,7 +1,7 @@
 import { 
   Briefcase, 
   Laptop, 
-  Gift, 
+  Percent, 
   Send, 
   MoreHorizontal,
   ShoppingCart,
@@ -18,7 +18,7 @@ import {
 const categoryIcons = {
   salary: Briefcase,
   freelance: Laptop,
-  investment: Gift,
+  investment: Percent,
   other_income: MoreHorizontal,
   food: ShoppingCart,
   transport: Car,
