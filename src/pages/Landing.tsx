@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Wallet, TrendingUp, Bell, Shield, ArrowRight } from "lucide-react";
+import logo from "@/assets/logo-onin.png";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -33,7 +34,10 @@ const Landing = () => {
       {/* Header com botão de Login */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
         <div className="container max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-          <h2 className="text-xl sm:text-2xl font-bold">Onin</h2>
+          <div className="flex items-center gap-2">
+            <img src={logo} alt="Onin" className="w-8 h-8 sm:w-10 sm:h-10" />
+            <h2 className="text-xl sm:text-2xl font-bold">Onin</h2>
+          </div>
           <Button 
             variant="ghost" 
             onClick={() => navigate("/login")}
@@ -48,6 +52,9 @@ const Landing = () => {
       <section className="pt-24 sm:pt-32 pb-12 sm:pb-20 px-4 sm:px-6">
         <div className="container max-w-4xl mx-auto text-center space-y-6 sm:space-y-8 animate-fade-in">
           <div className="space-y-3 sm:space-y-4">
+            <div className="flex justify-center mb-6">
+              <img src={logo} alt="Onin" className="w-20 h-20 sm:w-24 sm:h-24" />
+            </div>
             <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter leading-tight">
               Suas Finanças,
               <br />
