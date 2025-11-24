@@ -1,8 +1,6 @@
+import { useState, useRef } from "react";
 import { Home, Wifi, Smartphone, CreditCard, Tv, Zap, Droplet, MoreHorizontal } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,9 +10,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Trash2 } from "lucide-react";
 import { getDueBadgeText } from "@/lib/accountUtils";
 
 const categoryIcons = {
@@ -62,14 +58,46 @@ const AccountItem = ({
   onToggleActive,
   onDelete,
 }: AccountItemProps) => {
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
   const Icon = categoryIcons[category] || MoreHorizontal;
   const categoryLabel = categoryLabels[category] || "Outros";
   
   const badgeText = daysUntilDue !== undefined ? getDueBadgeText(daysUntilDue) : null;
 
+  const handleTouchStart = () => {
+    longPressTimer.current = setTimeout(() => {
+      setShowDeleteDialog(true);
+    }, 500);
+  };
+
+  const handleTouchEnd = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
+
+  const handleClick = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+    onToggleActive(id, !isActive);
+  };
+
   return (
-    <Card className={`p-4 ${!isActive ? 'opacity-60' : ''}`}>
-      <div className="flex items-center justify-between gap-4">
+    <>
+      <Card 
+        className={`p-4 cursor-pointer ${!isActive ? 'opacity-60' : ''}`}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleTouchStart}
+        onMouseUp={handleTouchEnd}
+        onMouseLeave={handleTouchEnd}
+        onClick={handleClick}
+      >
+        <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <div className="p-2 rounded-lg bg-primary/10 flex-shrink-0">
             <Icon className="w-5 h-5 text-primary" />
@@ -98,44 +126,31 @@ const AccountItem = ({
           </div>
         </div>
         
-        <div className="flex items-center gap-3">
-          <div className="text-right flex-shrink-0">
-            <p className="font-semibold text-foreground">
-              R$ {amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </p>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <Switch
-              checked={isActive}
-              onCheckedChange={(checked) => onToggleActive(id, checked)}
-            />
-            
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Excluir conta fixa</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Tem certeza que deseja excluir "{name}"? Esta ação não pode ser desfeita.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => onDelete(id)}>
-                    Excluir
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
+        <div className="text-right flex-shrink-0">
+          <p className="font-semibold text-foreground">
+            R$ {amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </p>
         </div>
       </div>
     </Card>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir conta fixa</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir "{name}"? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={() => onDelete(id)}>
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 };
 
