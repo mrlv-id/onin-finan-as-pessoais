@@ -25,16 +25,59 @@ const Dashboard = () => {
   const [todayBalance, setTodayBalance] = useState(0);
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const hour = new Date().getHours();
+    if (hour < 12) setGreeting("Bom dia");
+    else if (hour < 18) setGreeting("Boa tarde");
+    else setGreeting("Boa noite");
+  }, []);
+
+  useEffect(() => {
+    const initializePage = async () => {
       const { data: { session } } = await supabase.auth.getSession();
+      
       if (!session) {
         navigate("/login");
         return;
       }
+
       setUser(session.user);
+
+      // Get today's date at 00:00:00
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      // Fetch both queries in parallel
+      const [recentResult, todayResult] = await Promise.all([
+        supabase
+          .from("transactions")
+          .select("*")
+          .eq("user_id", session.user.id)
+          .order("date", { ascending: false })
+          .limit(4),
+        supabase
+          .from("transactions")
+          .select("*")
+          .eq("user_id", session.user.id)
+          .gte("date", today.toISOString())
+      ]);
+
+      if (recentResult.data) {
+        setTransactions(recentResult.data as Transaction[]);
+      }
+      
+      if (todayResult.data) {
+        const balance = todayResult.data.reduce((acc, transaction) => {
+          if (transaction.type === "income") {
+            return acc + Number(transaction.amount);
+          } else {
+            return acc - Number(transaction.amount);
+          }
+        }, 0);
+        setTodayBalance(balance);
+      }
     };
 
-    checkAuth();
+    initializePage();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
       if (!session) {
@@ -48,41 +91,32 @@ const Dashboard = () => {
   }, [navigate]);
 
   useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) setGreeting("Bom dia");
-    else if (hour < 18) setGreeting("Boa tarde");
-    else setGreeting("Boa noite");
-  }, []);
-
-  useEffect(() => {
     if (!user) return;
 
     const fetchTransactions = async () => {
-      // Get today's date at 00:00:00
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       
-      // Fetch last 4 transactions for display
-      const { data: recentData } = await supabase
-        .from("transactions")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("date", { ascending: false })
-        .limit(4);
-      
-      // Fetch today's transactions for balance calculation
-      const { data: todayData } = await supabase
-        .from("transactions")
-        .select("*")
-        .eq("user_id", user.id)
-        .gte("date", today.toISOString());
-      
-      if (recentData) {
-        setTransactions(recentData as Transaction[]);
+      const [recentResult, todayResult] = await Promise.all([
+        supabase
+          .from("transactions")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("date", { ascending: false })
+          .limit(4),
+        supabase
+          .from("transactions")
+          .select("*")
+          .eq("user_id", user.id)
+          .gte("date", today.toISOString())
+      ]);
+
+      if (recentResult.data) {
+        setTransactions(recentResult.data as Transaction[]);
       }
       
-      if (todayData) {
-        const balance = todayData.reduce((acc, transaction) => {
+      if (todayResult.data) {
+        const balance = todayResult.data.reduce((acc, transaction) => {
           if (transaction.type === "income") {
             return acc + Number(transaction.amount);
           } else {
@@ -92,8 +126,6 @@ const Dashboard = () => {
         setTodayBalance(balance);
       }
     };
-
-    fetchTransactions();
 
     const channel = supabase
       .channel("transactions-changes")

@@ -23,25 +23,62 @@ const Wallet = () => {
   const [period, setPeriod] = useState("7");
   const [totalBalance, setTotalBalance] = useState(0);
   const [accounts, setAccounts] = useState<FixedAccount[]>([]);
+  const [userId, setUserId] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const initializePage = async () => {
       const { data: { session } } = await supabase.auth.getSession();
+      
       if (!session) {
         navigate("/login");
+        return;
+      }
+
+      setUserId(session.user.id);
+
+      // Calculate date based on period
+      const today = new Date();
+      const startDate = new Date();
+      startDate.setDate(today.getDate() - Number(period));
+
+      // Fetch balance and accounts in parallel
+      const [transactionsResult, accountsResult] = await Promise.all([
+        supabase
+          .from("transactions")
+          .select("*")
+          .eq("user_id", session.user.id)
+          .gte("date", startDate.toISOString()),
+        supabase
+          .from("fixed_accounts")
+          .select("*")
+          .eq("user_id", session.user.id)
+          .order("due_day", { ascending: true })
+      ]);
+
+      if (transactionsResult.data) {
+        const balance = transactionsResult.data.reduce((acc, transaction) => {
+          if (transaction.type === "income") {
+            return acc + Number(transaction.amount);
+          } else {
+            return acc - Number(transaction.amount);
+          }
+        }, 0);
+        setTotalBalance(balance);
+      }
+
+      if (accountsResult.data) {
+        setAccounts(accountsResult.data as FixedAccount[]);
       }
     };
 
-    checkAuth();
-  }, [navigate]);
+    initializePage();
+  }, [navigate, period]);
 
   useEffect(() => {
-    const fetchBalance = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
+    if (!userId) return;
 
-      // Calculate date based on period
+    const fetchBalance = async () => {
       const today = new Date();
       const startDate = new Date();
       startDate.setDate(today.getDate() - Number(period));
@@ -49,7 +86,7 @@ const Wallet = () => {
       const { data } = await supabase
         .from("transactions")
         .select("*")
-        .eq("user_id", session.user.id)
+        .eq("user_id", userId)
         .gte("date", startDate.toISOString());
 
       if (data) {
@@ -64,10 +101,8 @@ const Wallet = () => {
       }
     };
 
-    fetchBalance();
-
     const channel = supabase
-      .channel("wallet-transactions-changes")
+      .channel("wallet-changes")
       .on(
         "postgres_changes",
         {
@@ -79,33 +114,6 @@ const Wallet = () => {
           fetchBalance();
         }
       )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [period]);
-
-  useEffect(() => {
-    const fetchAccounts = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-
-      const { data } = await supabase
-        .from("fixed_accounts")
-        .select("*")
-        .eq("user_id", session.user.id)
-        .order("due_day", { ascending: true });
-
-      if (data) {
-        setAccounts(data as FixedAccount[]);
-      }
-    };
-
-    fetchAccounts();
-
-    const channel = supabase
-      .channel("fixed-accounts-changes")
       .on(
         "postgres_changes",
         {
@@ -113,8 +121,16 @@ const Wallet = () => {
           schema: "public",
           table: "fixed_accounts",
         },
-        () => {
-          fetchAccounts();
+        async () => {
+          const { data } = await supabase
+            .from("fixed_accounts")
+            .select("*")
+            .eq("user_id", userId)
+            .order("due_day", { ascending: true });
+          
+          if (data) {
+            setAccounts(data as FixedAccount[]);
+          }
         }
       )
       .subscribe();
@@ -122,7 +138,7 @@ const Wallet = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [userId, period]);
 
   const handleToggleActive = async (id: string, isActive: boolean) => {
     const { error } = await supabase
