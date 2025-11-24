@@ -7,35 +7,45 @@ import {
   ShoppingCart,
   Car,
   Heart,
-  PawPrint,
-  Shirt
+  Gamepad2,
+  GraduationCap,
+  Home,
+  Wifi,
+  Smartphone,
+  CreditCard
 } from "lucide-react";
 
 const categoryIcons = {
   salary: Briefcase,
   freelance: Laptop,
-  cashback: Gift,
-  pix: Send,
+  investment: Gift,
   other_income: MoreHorizontal,
-  groceries: ShoppingCart,
+  food: ShoppingCart,
   transport: Car,
   health: Heart,
-  pets: PawPrint,
-  clothing: Shirt,
+  entertainment: Gamepad2,
+  education: GraduationCap,
+  rent: Home,
+  internet: Wifi,
+  phone: Smartphone,
+  credit_card: CreditCard,
   other_expense: MoreHorizontal,
 };
 
 const categoryLabels = {
   salary: "Salário",
   freelance: "Freelancer",
-  cashback: "Cashback",
-  pix: "Pix",
+  investment: "Investimento",
   other_income: "Outros",
-  groceries: "Mercado",
+  food: "Alimentação",
   transport: "Transporte",
   health: "Saúde",
-  pets: "Pets",
-  clothing: "Vestuário",
+  entertainment: "Lazer",
+  education: "Educação",
+  rent: "Aluguel",
+  internet: "Internet",
+  phone: "Celular",
+  credit_card: "Cartão",
   other_expense: "Outros",
 };
 

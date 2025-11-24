@@ -22,24 +22,31 @@ import {
   ShoppingCart,
   Car,
   Heart,
-  PawPrint,
-  Shirt
+  Gamepad2,
+  GraduationCap,
+  Home,
+  Wifi,
+  Smartphone,
+  CreditCard
 } from "lucide-react";
 
 const incomeCategories = [
   { value: "salary", label: "Salário", icon: Briefcase },
   { value: "freelance", label: "Freelancer", icon: Laptop },
-  { value: "cashback", label: "Cashback", icon: Gift },
-  { value: "pix", label: "Pix", icon: Send },
+  { value: "investment", label: "Investimento", icon: Gift },
   { value: "other_income", label: "Outros", icon: MoreHorizontal },
 ];
 
 const expenseCategories = [
-  { value: "groceries", label: "Mercado", icon: ShoppingCart },
+  { value: "food", label: "Alimentação", icon: ShoppingCart },
   { value: "transport", label: "Transporte", icon: Car },
   { value: "health", label: "Saúde", icon: Heart },
-  { value: "pets", label: "Pets", icon: PawPrint },
-  { value: "clothing", label: "Vestuário", icon: Shirt },
+  { value: "entertainment", label: "Lazer", icon: Gamepad2 },
+  { value: "education", label: "Educação", icon: GraduationCap },
+  { value: "rent", label: "Aluguel", icon: Home },
+  { value: "internet", label: "Internet", icon: Wifi },
+  { value: "phone", label: "Celular", icon: Smartphone },
+  { value: "credit_card", label: "Cartão", icon: CreditCard },
   { value: "other_expense", label: "Outros", icon: MoreHorizontal },
 ];
 

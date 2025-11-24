@@ -135,14 +135,17 @@ const AllTransactions = () => {
   const allCategories = [
     { value: "salary", label: "Salário" },
     { value: "freelance", label: "Freelancer" },
-    { value: "cashback", label: "Cashback" },
-    { value: "pix", label: "Pix" },
+    { value: "investment", label: "Investimento" },
     { value: "other_income", label: "Outros (Receita)" },
-    { value: "groceries", label: "Mercado" },
+    { value: "food", label: "Alimentação" },
     { value: "transport", label: "Transporte" },
     { value: "health", label: "Saúde" },
-    { value: "pets", label: "Pets" },
-    { value: "clothing", label: "Vestuário" },
+    { value: "entertainment", label: "Lazer" },
+    { value: "education", label: "Educação" },
+    { value: "rent", label: "Aluguel" },
+    { value: "internet", label: "Internet" },
+    { value: "phone", label: "Celular" },
+    { value: "credit_card", label: "Cartão" },
     { value: "other_expense", label: "Outros (Despesa)" },
   ];
 
