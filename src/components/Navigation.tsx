@@ -1,9 +1,9 @@
-import { Home, Wallet, User } from "lucide-react";
+import { LayoutDashboard, Wallet, User } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 
 const Navigation = () => {
   const navItems = [
-    { to: "/dashboard", icon: Home, label: "Início" },
+    { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { to: "/wallet", icon: Wallet, label: "Carteira" },
     { to: "/profile", icon: User, label: "Perfil" },
   ];
