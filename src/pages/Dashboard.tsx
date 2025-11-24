@@ -4,13 +4,24 @@ import { useNavigate } from "react-router-dom";
 import { User } from "@supabase/supabase-js";
 import Navigation from "@/components/Navigation";
 import FAB from "@/components/FAB";
+import TransactionItem from "@/components/TransactionItem";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+
+interface Transaction {
+  id: string;
+  name: string;
+  amount: number;
+  category: string;
+  type: "income" | "expense";
+  date: string;
+}
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [greeting, setGreeting] = useState("");
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -42,6 +53,45 @@ const Dashboard = () => {
     else setGreeting("Boa noite");
   }, []);
 
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchTransactions = async () => {
+      const { data } = await supabase
+        .from("transactions")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("date", { ascending: false })
+        .limit(4);
+
+      if (data) {
+        setTransactions(data as Transaction[]);
+      }
+    };
+
+    fetchTransactions();
+
+    const channel = supabase
+      .channel("transactions-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "transactions",
+          filter: `user_id=eq.${user.id}`,
+        },
+        () => {
+          fetchTransactions();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
+
   const userName = user?.user_metadata?.name?.split(" ")[0] || "Usuário";
 
   return (
@@ -71,9 +121,24 @@ const Dashboard = () => {
             </Button>
           </div>
 
-          <div className="text-center py-12 text-muted-foreground">
-            Nenhuma transação ainda
-          </div>
+          {transactions.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              Nenhuma transação ainda
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {transactions.map((transaction) => (
+                <TransactionItem
+                  key={transaction.id}
+                  name={transaction.name}
+                  amount={transaction.amount}
+                  category={transaction.category as any}
+                  type={transaction.type}
+                  date={transaction.date}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
