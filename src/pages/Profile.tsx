@@ -87,7 +87,8 @@ const Profile = () => {
               <div>
                 <Label className="text-base font-medium">Tema Escuro</Label>
                 <p className="text-sm text-muted-foreground">
-                  Alternar entre tema claro e escuro
+                  
+     
                 </p>
               </div>
             </div>
