@@ -1,1 +1,4 @@
 project_id = "vdzqpuwizbfcjwghfzdw"
+
+[functions.check-due-accounts]
+verify_jwt = false
