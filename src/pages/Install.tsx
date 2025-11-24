@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Smartphone, Download, CheckCircle } from "lucide-react";
+import { Download, CheckCircle } from "lucide-react";
 import { useState, useEffect } from "react";
+import logo from "@/assets/logo-onin.png";
 
 const Install = () => {
   const navigate = useNavigate();
@@ -47,8 +48,8 @@ const Install = () => {
     <div className="min-h-screen flex flex-col items-center justify-center px-6">
       <div className="w-full max-w-md space-y-8 text-center">
         <div className="space-y-4">
-          <div className="mx-auto w-20 h-20 rounded-2xl bg-primary flex items-center justify-center">
-            <Smartphone className="w-10 h-10 text-primary-foreground" />
+          <div className="mx-auto w-24 h-24 rounded-2xl bg-background border-2 border-border flex items-center justify-center p-4">
+            <img src={logo} alt="Onin" className="w-full h-full object-contain" />
           </div>
           
           <h1 className="text-3xl font-bold">Instale o Onin</h1>
