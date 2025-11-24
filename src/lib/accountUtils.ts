@@ -44,10 +44,10 @@ export const sortAccountsByDueDate = <T extends { due_day: number }>(
     .sort((a, b) => a.daysUntilDue - b.daysUntilDue);
 };
 
-export const getDueBadgeText = (daysUntilDue: number): string | null => {
-  if (daysUntilDue === 0) return "Vence hoje";
-  if (daysUntilDue === 1) return "Vence amanhã";
-  if (daysUntilDue === 2) return "Vence em 2 dias";
-  if (daysUntilDue === 3) return "Vence em 3 dias";
+export const getDueBadgeText = (daysUntilDue: number): { line1: string; line2: string } | null => {
+  if (daysUntilDue === 0) return { line1: "Vence", line2: "hoje" };
+  if (daysUntilDue === 1) return { line1: "Vence", line2: "amanhã" };
+  if (daysUntilDue === 2) return { line1: "Vence em", line2: "2 dias" };
+  if (daysUntilDue === 3) return { line1: "Vence em", line2: "3 dias" };
   return null;
 };

@@ -76,14 +76,19 @@ const AccountItem = ({
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-medium truncate">{name}</p>
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap mt-1">
               <p className="text-sm text-muted-foreground">
                 {categoryLabel}
               </p>
               {badgeText ? (
-                <Badge variant="destructive" className="text-[10px] py-0 px-2 h-5">
-                  {badgeText}
-                </Badge>
+                <div className="inline-flex flex-col items-center justify-center bg-muted rounded-full px-3 py-1 min-w-[80px]">
+                  <span className="text-[10px] font-medium text-foreground leading-tight">
+                    {badgeText.line1}
+                  </span>
+                  <span className="text-[11px] font-semibold text-foreground leading-tight">
+                    {badgeText.line2}
+                  </span>
+                </div>
               ) : (
                 <p className="text-sm text-muted-foreground">
                   • Vence dia {dueDay}
