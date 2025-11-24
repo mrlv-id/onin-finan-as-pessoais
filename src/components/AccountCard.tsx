@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { Home, Wifi, Smartphone, CreditCard, Tv, Zap, Droplet, MoreHorizontal } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,6 +12,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { getDueBadgeText } from "@/lib/accountUtils";
 
 const categoryIcons = {
   rent: Home,
@@ -40,6 +42,7 @@ interface AccountCardProps {
   amount: number;
   category: keyof typeof categoryIcons;
   dueDay: number;
+  daysUntilDue?: number;
   isActive: boolean;
   onToggleActive: (id: string, isActive: boolean) => void;
   onDelete: (id: string) => void;
@@ -51,6 +54,7 @@ const AccountCard = ({
   amount,
   category,
   dueDay,
+  daysUntilDue,
   isActive,
   onToggleActive,
   onDelete,
@@ -59,6 +63,8 @@ const AccountCard = ({
   const categoryLabel = categoryLabels[category] || "Outros";
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+  
+  const badgeText = daysUntilDue !== undefined ? getDueBadgeText(daysUntilDue) : null;
 
   const handleTouchStart = () => {
     longPressTimer.current = setTimeout(() => {
@@ -96,14 +102,20 @@ const AccountCard = ({
           <div className="p-3 rounded-full bg-primary/10">
             <Icon className="w-6 h-6 text-primary" />
           </div>
-          <div className="w-full">
+          <div className="w-full space-y-1">
             <p className="font-semibold text-sm truncate">{name}</p>
             <p className="text-xs text-muted-foreground">
               {categoryLabel}
             </p>
-            <p className="text-xs text-muted-foreground">
-              Vence dia {dueDay}
-            </p>
+            {badgeText ? (
+              <Badge variant="destructive" className="text-[10px] py-0 px-2 h-5">
+                {badgeText}
+              </Badge>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                Vence dia {dueDay}
+              </p>
+            )}
           </div>
           <p className="font-bold text-foreground">
             R$ {amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
