@@ -24,7 +24,7 @@ const Profile = () => {
   } = useTheme();
   const [user, setUser] = useState<User | null>(null);
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [pushEnabled, setPushEnabled] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   useEffect(() => {
     const checkAuth = async () => {
@@ -40,15 +40,9 @@ const Profile = () => {
       setUser(session.user);
       setName(session.user.user_metadata?.name || "");
       
-      // Buscar telefone do perfil
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("phone")
-        .eq("user_id", session.user.id)
-        .single();
-      
-      if (profile?.phone) {
-        setPhone(profile.phone);
+      // Check if push notifications are enabled
+      if ('Notification' in window && Notification.permission === 'granted') {
+        setPushEnabled(true);
       }
     };
     checkAuth();
@@ -73,7 +67,7 @@ const Profile = () => {
     try {
       const { error } = await supabase
         .from("profiles")
-        .update({ name, phone })
+        .update({ name })
         .eq("user_id", user.id);
       
       if (error) throw error;
@@ -91,6 +85,45 @@ const Profile = () => {
       });
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleTogglePushNotifications = async () => {
+    if (!user) return;
+
+    if (!('Notification' in window)) {
+      toast({
+        title: "Não suportado",
+        description: "Seu navegador não suporta notificações push.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (pushEnabled) {
+      // Disable notifications
+      setPushEnabled(false);
+      toast({
+        title: "Notificações desativadas",
+        description: "Você não receberá mais lembretes de vencimento.",
+      });
+    } else {
+      // Request permission and enable notifications
+      const permission = await Notification.requestPermission();
+      
+      if (permission === 'granted') {
+        setPushEnabled(true);
+        toast({
+          title: "Notificações ativadas",
+          description: "Você receberá lembretes quando suas contas estiverem próximas do vencimento.",
+        });
+      } else {
+        toast({
+          title: "Permissão negada",
+          description: "Você precisa permitir notificações nas configurações do navegador.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -119,21 +152,6 @@ const Profile = () => {
               <Input id="email" value={user?.email || ""} disabled className="h-12" />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="phone">Telefone (WhatsApp)</Label>
-              <Input 
-                id="phone" 
-                type="tel" 
-                placeholder="+55 11 99999-9999"
-                value={phone} 
-                onChange={e => setPhone(e.target.value)} 
-                className="h-12" 
-              />
-              <p className="text-xs text-muted-foreground">
-                Receba lembretes SMS quando suas contas estiverem próximas do vencimento
-              </p>
-            </div>
-
             <Button 
               onClick={handleSaveProfile} 
               disabled={isSaving}
@@ -151,6 +169,16 @@ const Profile = () => {
               <Label className="text-base font-medium">Tema Escuro</Label>
             </div>
             <Switch checked={theme === "dark"} onCheckedChange={checked => setTheme(checked ? "dark" : "light")} />
+          </div>
+
+          <div className="flex items-center justify-between p-4 rounded-lg border">
+            <div className="space-y-1">
+              <Label className="text-base font-medium">Notificações Push</Label>
+              <p className="text-xs text-muted-foreground">
+                Receba lembretes quando suas contas estiverem próximas do vencimento
+              </p>
+            </div>
+            <Switch checked={pushEnabled} onCheckedChange={handleTogglePushNotifications} />
           </div>
 
           <Button variant="outline" className="w-full h-12" onClick={handleLogout}>
