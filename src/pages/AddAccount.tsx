@@ -39,6 +39,7 @@ const AddAccount = () => {
         title: "Erro",
         description: "Usuário não autenticado",
         variant: "destructive",
+        duration: 1500,
       });
       setLoading(false);
       return;
@@ -57,11 +58,13 @@ const AddAccount = () => {
         title: "Erro ao salvar conta",
         description: error.message,
         variant: "destructive",
+        duration: 1500,
       });
     } else {
       toast({
         title: "Conta criada",
         description: "Conta fixa adicionada com sucesso",
+        duration: 1500,
       });
       navigate("/dashboard");
     }

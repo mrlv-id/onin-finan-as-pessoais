@@ -95,11 +95,13 @@ const EditTransactionDrawer = ({ open, onOpenChange, transaction }: EditTransact
         title: "Erro ao atualizar transação",
         description: error.message,
         variant: "destructive",
+        duration: 1500,
       });
     } else {
       toast({
         title: "Transação atualizada",
         description: "Transação atualizada com sucesso",
+        duration: 1500,
       });
       onOpenChange(false);
     }

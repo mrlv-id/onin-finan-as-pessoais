@@ -111,11 +111,13 @@ const AllTransactions = () => {
         title: "Erro ao excluir transação",
         description: error.message,
         variant: "destructive",
+        duration: 1500,
       });
     } else {
       toast({
         title: "Transação excluída",
         description: "Transação excluída com sucesso",
+        duration: 1500,
       });
       setTransactions((prev) => prev.filter((t) => t.id !== transactionToDelete));
     }

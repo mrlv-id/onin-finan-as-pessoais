@@ -70,6 +70,7 @@ const AddTransactionDrawer = ({ open, onOpenChange }: AddTransactionDrawerProps)
         title: "Erro",
         description: "Usuário não autenticado",
         variant: "destructive",
+        duration: 1500,
       });
       setLoading(false);
       return;
@@ -89,11 +90,13 @@ const AddTransactionDrawer = ({ open, onOpenChange }: AddTransactionDrawerProps)
         title: "Erro ao salvar transação",
         description: error.message,
         variant: "destructive",
+        duration: 1500,
       });
     } else {
       toast({
         title: "Transação criada",
         description: "Transação adicionada com sucesso",
+        duration: 1500,
       });
       setName("");
       setAmount("");

@@ -24,6 +24,7 @@ const Login = () => {
         title: "Erro ao entrar",
         description: error.message,
         variant: "destructive",
+        duration: 1500,
       });
     } else {
       navigate("/dashboard");
