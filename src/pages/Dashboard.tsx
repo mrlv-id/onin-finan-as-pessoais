@@ -7,7 +7,6 @@ import FAB from "@/components/FAB";
 import TransactionItem from "@/components/TransactionItem";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-
 interface Transaction {
   id: string;
   name: string;
@@ -16,86 +15,69 @@ interface Transaction {
   type: "income" | "expense";
   date: string;
 }
-
 const Dashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [greeting, setGreeting] = useState("");
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: {
+          session
+        }
+      } = await supabase.auth.getSession();
       if (!session) {
         navigate("/login");
         return;
       }
       setUser(session.user);
     };
-
     checkAuth();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+    const {
+      data: {
+        subscription
+      }
+    } = supabase.auth.onAuthStateChange((_, session) => {
       if (!session) {
         navigate("/login");
       } else {
         setUser(session.user);
       }
     });
-
     return () => subscription.unsubscribe();
   }, [navigate]);
-
   useEffect(() => {
     const hour = new Date().getHours();
-    if (hour < 12) setGreeting("Bom dia");
-    else if (hour < 18) setGreeting("Boa tarde");
-    else setGreeting("Boa noite");
+    if (hour < 12) setGreeting("Bom dia");else if (hour < 18) setGreeting("Boa tarde");else setGreeting("Boa noite");
   }, []);
-
   useEffect(() => {
     if (!user) return;
-
     const fetchTransactions = async () => {
-      const { data } = await supabase
-        .from("transactions")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("date", { ascending: false })
-        .limit(4);
-
+      const {
+        data
+      } = await supabase.from("transactions").select("*").eq("user_id", user.id).order("date", {
+        ascending: false
+      }).limit(4);
       if (data) {
         setTransactions(data as Transaction[]);
       }
     };
-
     fetchTransactions();
-
-    const channel = supabase
-      .channel("transactions-changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "transactions",
-          filter: `user_id=eq.${user.id}`,
-        },
-        () => {
-          fetchTransactions();
-        }
-      )
-      .subscribe();
-
+    const channel = supabase.channel("transactions-changes").on("postgres_changes", {
+      event: "*",
+      schema: "public",
+      table: "transactions",
+      filter: `user_id=eq.${user.id}`
+    }, () => {
+      fetchTransactions();
+    }).subscribe();
     return () => {
       supabase.removeChannel(channel);
     };
   }, [user]);
-
   const userName = user?.user_metadata?.name?.split(" ")[0] || "Usuário";
-
-  return (
-    <div className="min-h-screen pb-20">
+  return <div className="min-h-screen pb-20">
       <div className="container max-w-md mx-auto px-6 pt-8 space-y-8 animate-fade-in">
         <div className="space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">
@@ -105,47 +87,28 @@ const Dashboard = () => {
         </div>
 
         <Card className="p-6 space-y-2">
-          <p className="text-sm text-muted-foreground">Saldo total</p>
+          <p className="text-sm text-muted-foreground">Saldo de hoje                  </p>
           <h2 className="text-4xl font-bold">R$ 0,00</h2>
         </Card>
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">Últimas transações</h3>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate("/transactions")}
-            >
+            <Button variant="ghost" size="sm" onClick={() => navigate("/transactions")}>
               Ver todas
             </Button>
           </div>
 
-          {transactions.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
+          {transactions.length === 0 ? <div className="text-center py-12 text-muted-foreground">
               Nenhuma transação ainda
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {transactions.map((transaction) => (
-                <TransactionItem
-                  key={transaction.id}
-                  name={transaction.name}
-                  amount={transaction.amount}
-                  category={transaction.category as any}
-                  type={transaction.type}
-                  date={transaction.date}
-                />
-              ))}
-            </div>
-          )}
+            </div> : <div className="space-y-2">
+              {transactions.map(transaction => <TransactionItem key={transaction.id} name={transaction.name} amount={transaction.amount} category={transaction.category as any} type={transaction.type} date={transaction.date} />)}
+            </div>}
         </div>
       </div>
 
       <FAB />
       <Navigation />
-    </div>
-  );
+    </div>;
 };
-
 export default Dashboard;
