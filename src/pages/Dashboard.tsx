@@ -23,6 +23,7 @@ const Dashboard = () => {
   const [greeting, setGreeting] = useState("");
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [todayBalance, setTodayBalance] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -75,6 +76,8 @@ const Dashboard = () => {
         }, 0);
         setTodayBalance(balance);
       }
+      
+      setIsLoading(false);
     };
 
     initializePage();
@@ -162,9 +165,13 @@ const Dashboard = () => {
 
         <Card className="p-6 space-y-2">
           <p className="text-sm text-muted-foreground">Saldo de hoje</p>
-          <h2 className={`text-4xl font-bold ${todayBalance >= 0 ? 'text-foreground' : 'text-destructive'}`}>
-            R$ {todayBalance.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </h2>
+          {isLoading ? (
+            <div className="h-10 w-48 bg-muted animate-pulse rounded" />
+          ) : (
+            <h2 className={`text-4xl font-bold ${todayBalance >= 0 ? 'text-foreground' : 'text-destructive'}`}>
+              R$ {todayBalance.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </h2>
+          )}
         </Card>
 
         <div className="space-y-4">
@@ -175,7 +182,13 @@ const Dashboard = () => {
             </Button>
           </div>
 
-          {transactions.length === 0 ? (
+          {isLoading ? (
+            <div className="space-y-2">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-16 bg-muted animate-pulse rounded" />
+              ))}
+            </div>
+          ) : transactions.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               Nenhuma transação ainda
             </div>

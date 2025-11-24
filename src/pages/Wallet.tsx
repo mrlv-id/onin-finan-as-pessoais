@@ -24,6 +24,7 @@ const Wallet = () => {
   const [totalBalance, setTotalBalance] = useState(0);
   const [accounts, setAccounts] = useState<FixedAccount[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -70,6 +71,8 @@ const Wallet = () => {
       if (accountsResult.data) {
         setAccounts(accountsResult.data as FixedAccount[]);
       }
+      
+      setIsLoading(false);
     };
 
     initializePage();
@@ -194,9 +197,13 @@ const Wallet = () => {
 
           <Card className="p-6 space-y-2">
             <p className="text-sm text-muted-foreground">Saldo consolidado</p>
-            <h2 className={`text-4xl font-bold ${totalBalance >= 0 ? 'text-foreground' : 'text-destructive'}`}>
-              R$ {totalBalance.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </h2>
+            {isLoading ? (
+              <div className="h-10 w-48 bg-muted animate-pulse rounded" />
+            ) : (
+              <h2 className={`text-4xl font-bold ${totalBalance >= 0 ? 'text-foreground' : 'text-destructive'}`}>
+                R$ {totalBalance.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </h2>
+            )}
           </Card>
 
           <Tabs value={period} onValueChange={setPeriod} className="w-full">
@@ -220,7 +227,13 @@ const Wallet = () => {
             </Button>
           </div>
 
-          {accounts.length === 0 ? (
+          {isLoading ? (
+            <div className="grid grid-cols-2 gap-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-32 bg-muted animate-pulse rounded-lg" />
+              ))}
+            </div>
+          ) : accounts.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               Nenhuma conta cadastrada
             </div>
