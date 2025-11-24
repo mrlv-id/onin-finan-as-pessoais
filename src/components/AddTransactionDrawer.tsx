@@ -106,7 +106,7 @@ const AddTransactionDrawer = ({ open, onOpenChange }: AddTransactionDrawerProps)
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[70vh]">
+      <DrawerContent className="max-h-[80vh]">
         <DrawerHeader>
           <DrawerTitle>Adicionar Transação</DrawerTitle>
           <DrawerDescription>
