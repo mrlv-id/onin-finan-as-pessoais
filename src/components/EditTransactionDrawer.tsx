@@ -16,7 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { 
   Briefcase, 
   Laptop, 
-  Gift, 
+  Percent, 
   Send, 
   MoreHorizontal,
   ShoppingCart,
@@ -33,7 +33,7 @@ import {
 const incomeCategories = [
   { value: "salary", label: "Salário", icon: Briefcase },
   { value: "freelance", label: "Freela", icon: Laptop },
-  { value: "investment", label: "Invest", icon: Gift },
+  { value: "investment", label: "Invest", icon: Percent },
   { value: "other_income", label: "Outros", icon: MoreHorizontal },
 ];
 
