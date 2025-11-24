@@ -1,19 +1,19 @@
 import { useState } from "react";
-import { Plus, X, FileText, CreditCard } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import AddAccountDrawer from "./AddAccountDrawer";
 import AddTransactionDrawer from "./AddTransactionDrawer";
 
 const FAB = () => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-  const [showAccountDrawer, setShowAccountDrawer] = useState(false);
   const [showTransactionDrawer, setShowTransactionDrawer] = useState(false);
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
   const handleAddAccount = () => {
     setIsOpen(false);
-    setShowAccountDrawer(true);
+    navigate("/add-account");
   };
 
   const handleAddTransaction = () => {
@@ -54,7 +54,6 @@ const FAB = () => {
         </Button>
       </div>
 
-      <AddAccountDrawer open={showAccountDrawer} onOpenChange={setShowAccountDrawer} />
       <AddTransactionDrawer open={showTransactionDrawer} onOpenChange={setShowTransactionDrawer} />
     </>
   );

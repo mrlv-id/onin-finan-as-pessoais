@@ -11,6 +11,7 @@ import Wallet from "./pages/Wallet";
 import Profile from "./pages/Profile";
 import AllTransactions from "./pages/AllTransactions";
 import AllAccounts from "./pages/AllAccounts";
+import AddAccount from "./pages/AddAccount";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/profile" element={<Profile />} />
           <Route path="/transactions" element={<AllTransactions />} />
           <Route path="/accounts" element={<AllAccounts />} />
+          <Route path="/add-account" element={<AddAccount />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
