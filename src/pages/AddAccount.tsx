@@ -145,7 +145,7 @@ const AddAccount = () => {
                       }`}
                     >
                       <Icon className="w-6 h-6 mb-1" />
-                      <span className="text-xs text-center">{cat.label}</span>
+                      <span className={`text-center leading-tight ${cat.value === 'subscription' ? 'text-[10px]' : 'text-xs'}`}>{cat.label}</span>
                     </button>
                   );
                 })}
