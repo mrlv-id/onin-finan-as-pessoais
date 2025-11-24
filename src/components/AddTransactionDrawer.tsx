@@ -170,13 +170,10 @@ const AddTransactionDrawer = ({ open, onOpenChange }: AddTransactionDrawerProps)
                 </div>
               </div>
 
-              <div className="pt-2 pb-20 space-y-2">
+              <div className="pt-2 pb-20">
                 <Button type="submit" disabled={loading || !category} className="w-full">
                   {loading ? "Salvando..." : "Salvar Transação"}
                 </Button>
-                <DrawerClose asChild>
-                  <Button variant="outline" className="w-full">Cancelar</Button>
-                </DrawerClose>
               </div>
             </form>
           </Tabs>
