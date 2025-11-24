@@ -84,13 +84,7 @@ const Profile = () => {
           <div className="flex items-center justify-between p-4 rounded-lg border">
             <div className="flex items-center space-x-3">
               {theme === "dark" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
-              <div>
-                <Label className="text-base font-medium">Tema Escuro</Label>
-                <p className="text-sm text-muted-foreground">
-                  
-     
-                </p>
-              </div>
+              <Label className="text-base font-medium">Tema Escuro</Label>
             </div>
             <Switch checked={theme === "dark"} onCheckedChange={checked => setTheme(checked ? "dark" : "light")} />
           </div>
