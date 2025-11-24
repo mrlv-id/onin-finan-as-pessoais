@@ -88,7 +88,7 @@ const AddAccountDrawer = ({ open, onOpenChange }: AddAccountDrawerProps) => {
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[70vh]">
+      <DrawerContent className="max-h-[95vh]">
         <DrawerHeader>
           <DrawerTitle>Adicionar Conta Fixa</DrawerTitle>
           <DrawerDescription>
