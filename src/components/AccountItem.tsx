@@ -1,6 +1,5 @@
 import { useState, useRef } from "react";
 import { Home, Wifi, Smartphone, CreditCard, Tv, Zap, Droplet, MoreHorizontal } from "lucide-react";
-import { Card } from "@/components/ui/card";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -88,8 +87,8 @@ const AccountItem = ({
 
   return (
     <>
-      <Card 
-        className={`p-4 cursor-pointer ${!isActive ? 'opacity-60' : ''}`}
+      <div 
+        className={`flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors cursor-pointer ${!isActive ? 'opacity-60' : ''}`}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onMouseDown={handleTouchStart}
@@ -97,42 +96,40 @@ const AccountItem = ({
         onMouseLeave={handleTouchEnd}
         onClick={handleClick}
       >
-        <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3 flex-1 min-w-0">
-          <div className="p-2 rounded-lg bg-primary/10 flex-shrink-0">
-            <Icon className="w-5 h-5 text-primary" />
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-muted flex-shrink-0">
+            <Icon className="w-5 h-5" />
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-medium truncate">{name}</p>
-            <div className="flex items-center gap-2 flex-wrap mt-1">
-              <p className="text-sm text-muted-foreground">
+          <div className="space-y-1">
+            <p className="font-medium">{name}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-xs text-muted-foreground">
                 {categoryLabel}
               </p>
-              {badgeText ? (
-                <div className="inline-flex flex-col items-center justify-center bg-muted rounded-full px-3 py-1 min-w-[80px]">
-                  <span className="text-[10px] font-medium text-foreground leading-tight">
+              {badgeText && (
+                <div className="inline-flex flex-col items-center justify-center bg-muted rounded-full px-2.5 py-0.5">
+                  <span className="text-[9px] font-medium text-foreground leading-tight">
                     {badgeText.line1}
                   </span>
-                  <span className="text-[11px] font-semibold text-foreground leading-tight">
+                  <span className="text-[10px] font-semibold text-foreground leading-tight">
                     {badgeText.line2}
                   </span>
                 </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  • Vence dia {dueDay}
-                </p>
               )}
             </div>
+            {!badgeText && (
+              <p className="text-xs text-muted-foreground">
+                • Vence dia {dueDay}
+              </p>
+            )}
           </div>
         </div>
-        
-        <div className="text-right flex-shrink-0">
+        <div className="text-right">
           <p className="font-semibold text-foreground">
             R$ {amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
         </div>
       </div>
-    </Card>
 
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
