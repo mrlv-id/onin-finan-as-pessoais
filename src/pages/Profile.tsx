@@ -8,12 +8,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Switch } from "@/components/ui/switch";
 import { signOut } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import { useTheme } from "next-themes";
+import { Moon, Sun } from "lucide-react";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
   const [user, setUser] = useState<User | null>(null);
   const [name, setName] = useState("");
 
@@ -88,6 +92,26 @@ const Profile = () => {
         </div>
 
         <div className="pt-8 space-y-4">
+          <div className="flex items-center justify-between p-4 rounded-lg border">
+            <div className="flex items-center space-x-3">
+              {theme === "dark" ? (
+                <Moon className="w-5 h-5" />
+              ) : (
+                <Sun className="w-5 h-5" />
+              )}
+              <div>
+                <Label className="text-base font-medium">Tema Escuro</Label>
+                <p className="text-sm text-muted-foreground">
+                  Alternar entre tema claro e escuro
+                </p>
+              </div>
+            </div>
+            <Switch
+              checked={theme === "dark"}
+              onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+            />
+          </div>
+
           <Button
             variant="outline"
             className="w-full h-12"
