@@ -54,7 +54,6 @@ const AddTransactionDrawer = ({ open, onOpenChange }: AddTransactionDrawerProps)
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
@@ -82,7 +81,7 @@ const AddTransactionDrawer = ({ open, onOpenChange }: AddTransactionDrawerProps)
       amount: parseFloat(amount),
       type,
       category: category as any,
-      date: new Date(date).toISOString(),
+      date: new Date().toISOString(),
     }]);
 
     if (error) {
@@ -99,7 +98,6 @@ const AddTransactionDrawer = ({ open, onOpenChange }: AddTransactionDrawerProps)
       setName("");
       setAmount("");
       setCategory("");
-      setDate(new Date().toISOString().split("T")[0]);
       onOpenChange(false);
     }
 
@@ -108,15 +106,15 @@ const AddTransactionDrawer = ({ open, onOpenChange }: AddTransactionDrawerProps)
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[50vh] flex flex-col">
-        <DrawerHeader className="flex-shrink-0">
+      <DrawerContent className="max-h-[50vh]">
+        <DrawerHeader>
           <DrawerTitle>Adicionar Transação</DrawerTitle>
           <DrawerDescription>
             Adicione uma nova receita ou despesa
           </DrawerDescription>
         </DrawerHeader>
 
-        <div className="flex-1 overflow-y-auto px-4 pb-4">
+        <div className="px-4 pb-4">
           <Tabs value={type} onValueChange={(v) => setType(v as "income" | "expense")} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-4">
               <TabsTrigger value="income">Receita</TabsTrigger>
@@ -149,17 +147,6 @@ const AddTransactionDrawer = ({ open, onOpenChange }: AddTransactionDrawerProps)
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="date">Data</Label>
-                <Input
-                  id="date"
-                  type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
                 <Label>Categoria</Label>
                 <div className="grid grid-cols-5 gap-2">
                   {categories.map((cat) => {
@@ -183,12 +170,12 @@ const AddTransactionDrawer = ({ open, onOpenChange }: AddTransactionDrawerProps)
                 </div>
               </div>
 
-              <div className="pt-4">
+              <div className="pt-4 space-y-2">
                 <Button type="submit" disabled={loading || !category} className="w-full">
                   {loading ? "Salvando..." : "Salvar Transação"}
                 </Button>
                 <DrawerClose asChild>
-                  <Button variant="outline" className="w-full mt-2">Cancelar</Button>
+                  <Button variant="outline" className="w-full">Cancelar</Button>
                 </DrawerClose>
               </div>
             </form>
