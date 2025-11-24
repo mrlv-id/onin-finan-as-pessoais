@@ -88,15 +88,15 @@ const AddAccountDrawer = ({ open, onOpenChange }: AddAccountDrawerProps) => {
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[50vh] flex flex-col">
-        <DrawerHeader className="flex-shrink-0">
+      <DrawerContent className="max-h-[50vh]">
+        <DrawerHeader>
           <DrawerTitle>Adicionar Conta Fixa</DrawerTitle>
           <DrawerDescription>
             Adicione uma nova conta que se repete mensalmente
           </DrawerDescription>
         </DrawerHeader>
 
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-4 pb-4 space-y-4">
+        <form onSubmit={handleSubmit} className="px-4 pb-4 space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Nome da conta</Label>
             <Input
@@ -137,7 +137,7 @@ const AddAccountDrawer = ({ open, onOpenChange }: AddAccountDrawerProps) => {
 
           <div className="space-y-2">
             <Label>Categoria</Label>
-            <div className="grid grid-cols-5 gap-2">
+            <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4">
               {categories.map((cat) => {
                 const Icon = cat.icon;
                 return (
@@ -145,7 +145,7 @@ const AddAccountDrawer = ({ open, onOpenChange }: AddAccountDrawerProps) => {
                     key={cat.value}
                     type="button"
                     onClick={() => setCategory(cat.value)}
-                    className={`flex flex-col items-center justify-center p-3 rounded-lg border transition-all ${
+                    className={`flex flex-col items-center justify-center p-3 rounded-lg border transition-all flex-shrink-0 w-20 ${
                       category === cat.value
                         ? "bg-primary text-primary-foreground border-primary"
                         : "bg-background hover:bg-accent"
@@ -159,12 +159,12 @@ const AddAccountDrawer = ({ open, onOpenChange }: AddAccountDrawerProps) => {
             </div>
           </div>
 
-          <div className="pt-4">
+          <div className="pt-4 space-y-2">
             <Button type="submit" disabled={loading || !category} className="w-full">
               {loading ? "Salvando..." : "Salvar Conta"}
             </Button>
             <DrawerClose asChild>
-              <Button variant="outline" className="w-full mt-2">Cancelar</Button>
+              <Button variant="outline" className="w-full">Cancelar</Button>
             </DrawerClose>
           </div>
         </form>
