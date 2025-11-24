@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { User } from "@supabase/supabase-js";
@@ -7,12 +7,12 @@ import FAB from "@/components/FAB";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
 import { signOut } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "next-themes";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, Camera, Loader2 } from "lucide-react";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 const Profile = () => {
   const navigate = useNavigate();
@@ -21,7 +21,10 @@ const Profile = () => {
   const { isEnabled: pushEnabled, toggle: togglePush } = usePushNotifications();
   const [user, setUser] = useState<User | null>(null);
   const [name, setName] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const nameTimeoutRef = useRef<NodeJS.Timeout>();
   useEffect(() => {
     const checkAuth = async () => {
       const {
@@ -35,6 +38,17 @@ const Profile = () => {
       }
       setUser(session.user);
       setName(session.user.user_metadata?.name || "");
+      
+      // Load profile data including avatar
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("avatar_url")
+        .eq("user_id", session.user.id)
+        .single();
+      
+      if (profile?.avatar_url) {
+        setAvatarUrl(profile.avatar_url);
+      }
     };
     checkAuth();
     const {
@@ -51,31 +65,101 @@ const Profile = () => {
     });
     return () => subscription.unsubscribe();
   }, [navigate]);
-  const handleSaveProfile = async () => {
-    if (!user) return;
+
+  // Auto-save name with debounce
+  useEffect(() => {
+    if (!user || !name) return;
     
-    setIsSaving(true);
+    // Clear previous timeout
+    if (nameTimeoutRef.current) {
+      clearTimeout(nameTimeoutRef.current);
+    }
+    
+    // Set new timeout to save after 1 second of no typing
+    nameTimeoutRef.current = setTimeout(async () => {
+      try {
+        const { error } = await supabase
+          .from("profiles")
+          .update({ name })
+          .eq("user_id", user.id);
+        
+        if (error) throw error;
+        
+        toast({
+          title: "Nome atualizado",
+          description: "Seu nome foi salvo automaticamente.",
+        });
+      } catch (error) {
+        console.error("Error updating name:", error);
+        toast({
+          title: "Erro ao atualizar",
+          description: "Não foi possível salvar o nome.",
+          variant: "destructive",
+        });
+      }
+    }, 1000);
+    
+    return () => {
+      if (nameTimeoutRef.current) {
+        clearTimeout(nameTimeoutRef.current);
+      }
+    };
+  }, [name, user, toast]);
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!user || !event.target.files || event.target.files.length === 0) return;
+    
+    const file = event.target.files[0];
+    setIsUploading(true);
+    
     try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ name })
-        .eq("user_id", user.id);
+      // Delete old avatar if exists
+      if (avatarUrl) {
+        const oldPath = avatarUrl.split('/').pop();
+        if (oldPath) {
+          await supabase.storage
+            .from('avatars')
+            .remove([`${user.id}/${oldPath}`]);
+        }
+      }
       
-      if (error) throw error;
+      // Upload new avatar
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${user.id}/${fileName}`;
       
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file);
+      
+      if (uploadError) throw uploadError;
+      
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+      
+      // Update profile with new avatar URL
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('user_id', user.id);
+      
+      if (updateError) throw updateError;
+      
+      setAvatarUrl(publicUrl);
       toast({
-        title: "Perfil atualizado",
-        description: "Suas informações foram salvas com sucesso.",
+        title: "Foto atualizada",
+        description: "Sua foto de perfil foi salva automaticamente.",
       });
     } catch (error) {
-      console.error("Error updating profile:", error);
+      console.error('Error uploading avatar:', error);
       toast({
-        title: "Erro ao atualizar",
-        description: "Não foi possível salvar as alterações.",
+        title: "Erro ao fazer upload",
+        description: "Não foi possível atualizar a foto.",
         variant: "destructive",
       });
     } finally {
-      setIsSaving(false);
+      setIsUploading(false);
     }
   };
 
@@ -89,28 +173,50 @@ const Profile = () => {
         <h1 className="text-3xl font-bold text-center">Perfil</h1>
 
         <div className="flex flex-col items-center space-y-4">
-          <Avatar className="w-24 h-24">
-            <AvatarFallback className="text-2xl">{initials}</AvatarFallback>
-          </Avatar>
+          <div className="relative group">
+            <Avatar className="w-24 h-24 cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+              {avatarUrl && <AvatarImage src={avatarUrl} alt={name} />}
+              <AvatarFallback className="text-2xl">{initials}</AvatarFallback>
+            </Avatar>
+            <div 
+              className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {isUploading ? (
+                <Loader2 className="w-6 h-6 text-white animate-spin" />
+              ) : (
+                <Camera className="w-6 h-6 text-white" />
+              )}
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleAvatarUpload}
+              disabled={isUploading}
+            />
+          </div>
 
           <div className="w-full space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Nome</Label>
-              <Input id="name" value={name} onChange={e => setName(e.target.value)} className="h-12" />
+              <Input 
+                id="name" 
+                value={name} 
+                onChange={e => setName(e.target.value)} 
+                className="h-12"
+                placeholder="Digite seu nome"
+              />
+              <p className="text-xs text-muted-foreground">
+                Salvo automaticamente
+              </p>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input id="email" value={user?.email || ""} disabled className="h-12" />
             </div>
-
-            <Button 
-              onClick={handleSaveProfile} 
-              disabled={isSaving}
-              className="w-full h-12"
-            >
-              {isSaving ? "Salvando..." : "Salvar Alterações"}
-            </Button>
           </div>
         </div>
 
