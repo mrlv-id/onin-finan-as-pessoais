@@ -151,11 +151,13 @@ const Wallet = () => {
         title: "Erro",
         description: "Não foi possível atualizar a conta",
         variant: "destructive",
+        duration: 1500,
       });
     } else {
       toast({
         title: isActive ? "Conta ativada" : "Conta pausada",
         description: isActive ? "A conta foi reativada" : "A conta foi pausada",
+        duration: 1500,
       });
     }
   };
@@ -171,11 +173,13 @@ const Wallet = () => {
         title: "Erro",
         description: "Não foi possível excluir a conta",
         variant: "destructive",
+        duration: 1500,
       });
     } else {
       toast({
         title: "Conta excluída",
         description: "A conta foi removida com sucesso",
+        duration: 1500,
       });
     }
   };

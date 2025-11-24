@@ -25,11 +25,13 @@ const Signup = () => {
         title: "Erro ao criar conta",
         description: error.message,
         variant: "destructive",
+        duration: 1500,
       });
     } else {
       toast({
         title: "Conta criada!",
         description: "Você será redirecionado em instantes...",
+        duration: 1500,
       });
       setTimeout(() => navigate("/dashboard"), 1500);
     }
