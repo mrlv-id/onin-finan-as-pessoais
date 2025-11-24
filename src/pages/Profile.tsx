@@ -23,6 +23,7 @@ const Profile = () => {
   const [name, setName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isNameInitialized, setIsNameInitialized] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const nameTimeoutRef = useRef<NodeJS.Timeout>();
   useEffect(() => {
@@ -37,7 +38,8 @@ const Profile = () => {
         return;
       }
       setUser(session.user);
-      setName(session.user.user_metadata?.name || "");
+      const initialName = session.user.user_metadata?.name || "";
+      setName(initialName);
       
       // Load profile data including avatar
       const { data: profile } = await supabase
@@ -49,6 +51,9 @@ const Profile = () => {
       if (profile?.avatar_url) {
         setAvatarUrl(profile.avatar_url);
       }
+      
+      // Mark name as initialized after loading
+      setTimeout(() => setIsNameInitialized(true), 100);
     };
     checkAuth();
     const {
@@ -68,7 +73,7 @@ const Profile = () => {
 
   // Auto-save name with debounce
   useEffect(() => {
-    if (!user || !name) return;
+    if (!user || !name || !isNameInitialized) return;
     
     // Clear previous timeout
     if (nameTimeoutRef.current) {
@@ -104,7 +109,7 @@ const Profile = () => {
         clearTimeout(nameTimeoutRef.current);
       }
     };
-  }, [name, user, toast]);
+  }, [name, user, toast, isNameInitialized]);
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!user || !event.target.files || event.target.files.length === 0) return;
     
