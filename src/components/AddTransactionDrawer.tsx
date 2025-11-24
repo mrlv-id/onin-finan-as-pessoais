@@ -39,8 +39,8 @@ const incomeCategories = [
 ];
 
 const expenseCategories = [
-  { value: "food", label: "Alimentação", icon: ShoppingCart },
-  { value: "transport", label: "Transporte", icon: Car },
+  { value: "food", label: "Comida", icon: ShoppingCart },
+  { value: "transport", label: "Transport", icon: Car },
   { value: "health", label: "Saúde", icon: Heart },
   { value: "entertainment", label: "Lazer", icon: Gamepad2 },
   { value: "education", label: "Educação", icon: GraduationCap },
