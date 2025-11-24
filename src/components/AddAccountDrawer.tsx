@@ -159,13 +159,10 @@ const AddAccountDrawer = ({ open, onOpenChange }: AddAccountDrawerProps) => {
             </div>
           </div>
 
-          <div className="pt-4 space-y-2">
+          <div className="pt-4">
             <Button type="submit" disabled={loading || !category} className="w-full">
               {loading ? "Salvando..." : "Salvar Conta"}
             </Button>
-            <DrawerClose asChild>
-              <Button variant="outline" className="w-full">Cancelar</Button>
-            </DrawerClose>
           </div>
         </form>
       </DrawerContent>
