@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate, Link } from "react-router-dom";
-import { signIn, signInWithGoogle } from "@/lib/supabase";
+import { signIn } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 
 const Login = () => {
@@ -32,16 +32,6 @@ const Login = () => {
     setLoading(false);
   };
 
-  const handleGoogleLogin = async () => {
-    const { error } = await signInWithGoogle();
-    if (error) {
-      toast({
-        title: "Erro ao entrar com Google",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 animate-fade-in">
@@ -82,15 +72,6 @@ const Login = () => {
             disabled={loading}
           >
             {loading ? "Entrando..." : "Entrar"}
-          </Button>
-
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full h-12"
-            onClick={handleGoogleLogin}
-          >
-            Entrar com Google
           </Button>
         </form>
 
