@@ -1,4 +1,4 @@
-import { Home, Wifi, Smartphone, CreditCard, Tv, Building2, Droplet, MoreHorizontal } from "lucide-react";
+import { Home, Wifi, Smartphone, CreditCard, Tv, Zap, Droplet, MoreHorizontal } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -21,8 +21,8 @@ const categoryIcons = {
   phone: Smartphone,
   credit_card: CreditCard,
   subscription: Tv,
-  bill: Building2,
-  loan: Droplet,
+  electricity: Zap,
+  water: Droplet,
   other: MoreHorizontal,
 };
 
@@ -32,8 +32,8 @@ const categoryLabels = {
   phone: "Celular",
   credit_card: "Cartão",
   subscription: "Assinatura",
-  bill: "Conta",
-  loan: "Empréstimo",
+  electricity: "Luz",
+  water: "Água",
   other: "Outros",
 };
 

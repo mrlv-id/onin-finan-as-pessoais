@@ -130,8 +130,8 @@ export type Database = {
         | "phone"
         | "credit_card"
         | "subscription"
-        | "bill"
-        | "loan"
+        | "electricity"
+        | "water"
         | "other"
       transaction_category:
         | "salary"
@@ -281,8 +281,8 @@ export const Constants = {
         "phone",
         "credit_card",
         "subscription",
-        "bill",
-        "loan",
+        "electricity",
+        "water",
         "other",
       ],
       transaction_category: [
