@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import AccountItem from "@/components/AccountItem";
 import { useToast } from "@/hooks/use-toast";
 import { sortAccountsByDueDate, FixedAccountWithDays } from "@/lib/accountUtils";
@@ -138,6 +139,13 @@ const AllAccounts = () => {
           <h1 className="text-3xl font-bold">Todas as contas</h1>
         </div>
 
+        <Alert>
+          <Info className="h-4 w-4" />
+          <AlertDescription>
+            Toque uma vez para pausar e pressione para excluir
+          </AlertDescription>
+        </Alert>
+
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -166,10 +174,6 @@ const AllAccounts = () => {
             ))}
           </div>
         )}
-
-        <p className="text-sm text-center text-muted-foreground">
-          Toque uma vez para pausar e pressione para excluir
-        </p>
       </div>
     </div>
   );
