@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { sortAccountsByDueDate, FixedAccountWithDays } from "@/lib/accountUtils";
 interface FixedAccount {
   id: string;
   name: string;
@@ -25,9 +26,9 @@ const Wallet = () => {
   } = useCache();
   const [period, setPeriod] = useState("7");
   const [totalBalance, setTotalBalance] = useState(cache.totalBalance[period] || 0);
-  const [accounts, setAccounts] = useState<FixedAccount[]>(cache.fixedAccounts);
+  const [accounts, setAccounts] = useState<FixedAccountWithDays[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(!cache.fixedAccounts.length);
+  const [isLoading, setIsLoading] = useState(true);
   const {
     toast
   } = useToast();
@@ -71,7 +72,8 @@ const Wallet = () => {
       }
       if (accountsResult.data) {
         const fixedAccounts = accountsResult.data as FixedAccount[];
-        setAccounts(fixedAccounts);
+        const sortedAccounts = sortAccountsByDueDate(fixedAccounts);
+        setAccounts(sortedAccounts);
         updateCache({
           fixedAccounts
         });
@@ -126,7 +128,8 @@ const Wallet = () => {
       });
       if (data) {
         const fixedAccounts = data as FixedAccount[];
-        setAccounts(fixedAccounts);
+        const sortedAccounts = sortAccountsByDueDate(fixedAccounts);
+        setAccounts(sortedAccounts);
         updateCache({
           fixedAccounts
         });
@@ -213,7 +216,7 @@ const Wallet = () => {
             </div> : accounts.length === 0 ? <div className="text-center py-12 text-muted-foreground">
               Nenhuma conta cadastrada
             </div> : <div className="grid grid-cols-2 gap-3">
-              {accounts.map(account => <AccountCard key={account.id} id={account.id} name={account.name} amount={Number(account.amount)} category={account.category as any} dueDay={account.due_day} isActive={account.is_active} onToggleActive={handleToggleActive} onDelete={handleDelete} />)}
+              {accounts.map(account => <AccountCard key={account.id} id={account.id} name={account.name} amount={Number(account.amount)} category={account.category as any} dueDay={account.due_day} daysUntilDue={account.daysUntilDue} isActive={account.is_active} onToggleActive={handleToggleActive} onDelete={handleDelete} />)}
             </div>}
         </div>
       </div>
