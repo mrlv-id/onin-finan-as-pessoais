@@ -23,9 +23,10 @@ const Profile = () => {
   const [name, setName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [isNameInitialized, setIsNameInitialized] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const nameTimeoutRef = useRef<NodeJS.Timeout>();
+  const initialNameRef = useRef<string>("");
+  const hasUserEditedRef = useRef(false);
   useEffect(() => {
     const checkAuth = async () => {
       const {
@@ -40,6 +41,8 @@ const Profile = () => {
       setUser(session.user);
       const initialName = session.user.user_metadata?.name || "";
       setName(initialName);
+      initialNameRef.current = initialName;
+      hasUserEditedRef.current = false;
       
       // Load profile data including avatar
       const { data: profile } = await supabase
@@ -51,9 +54,6 @@ const Profile = () => {
       if (profile?.avatar_url) {
         setAvatarUrl(profile.avatar_url);
       }
-      
-      // Mark name as initialized after loading
-      setTimeout(() => setIsNameInitialized(true), 100);
     };
     checkAuth();
     const {
@@ -65,7 +65,10 @@ const Profile = () => {
         navigate("/login");
       } else {
         setUser(session.user);
-        setName(session.user.user_metadata?.name || "");
+        const initialName = session.user.user_metadata?.name || "";
+        setName(initialName);
+        initialNameRef.current = initialName;
+        hasUserEditedRef.current = false;
       }
     });
     return () => subscription.unsubscribe();
@@ -73,7 +76,10 @@ const Profile = () => {
 
   // Auto-save name with debounce
   useEffect(() => {
-    if (!user || !name || !isNameInitialized) return;
+    if (!user || !name) return;
+    
+    // Skip if this is the initial load (name hasn't been edited by user)
+    if (name === initialNameRef.current && !hasUserEditedRef.current) return;
     
     // Clear previous timeout
     if (nameTimeoutRef.current) {
@@ -109,7 +115,7 @@ const Profile = () => {
         clearTimeout(nameTimeoutRef.current);
       }
     };
-  }, [name, user, toast, isNameInitialized]);
+  }, [name, user, toast]);
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!user || !event.target.files || event.target.files.length === 0) return;
     
@@ -209,7 +215,10 @@ const Profile = () => {
               <Input 
                 id="name" 
                 value={name} 
-                onChange={e => setName(e.target.value)} 
+                onChange={e => {
+                  setName(e.target.value);
+                  hasUserEditedRef.current = true;
+                }} 
                 className="h-12"
                 placeholder="Digite seu nome"
               />
