@@ -73,7 +73,7 @@ const Wallet = () => {
       if (accountsResult.data) {
         const fixedAccounts = accountsResult.data as FixedAccount[];
         const sortedAccounts = sortAccountsByDueDate(fixedAccounts);
-        setAccounts(sortedAccounts);
+        setAccounts(sortedAccounts.slice(0, 4));
         updateCache({
           fixedAccounts
         });
@@ -129,7 +129,7 @@ const Wallet = () => {
       if (data) {
         const fixedAccounts = data as FixedAccount[];
         const sortedAccounts = sortAccountsByDueDate(fixedAccounts);
-        setAccounts(sortedAccounts);
+        setAccounts(sortedAccounts.slice(0, 4));
         updateCache({
           fixedAccounts
         });
