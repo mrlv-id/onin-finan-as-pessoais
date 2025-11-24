@@ -2,6 +2,7 @@ import { Home, Wifi, Smartphone, CreditCard, Tv, Zap, Droplet, MoreHorizontal } 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,6 +15,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Trash2 } from "lucide-react";
+import { getDueBadgeText } from "@/lib/accountUtils";
 
 const categoryIcons = {
   rent: Home,
@@ -43,6 +45,7 @@ interface AccountItemProps {
   amount: number;
   category: keyof typeof categoryIcons;
   dueDay: number;
+  daysUntilDue?: number;
   isActive: boolean;
   onToggleActive: (id: string, isActive: boolean) => void;
   onDelete: (id: string) => void;
@@ -54,12 +57,15 @@ const AccountItem = ({
   amount,
   category,
   dueDay,
+  daysUntilDue,
   isActive,
   onToggleActive,
   onDelete,
 }: AccountItemProps) => {
   const Icon = categoryIcons[category] || MoreHorizontal;
   const categoryLabel = categoryLabels[category] || "Outros";
+  
+  const badgeText = daysUntilDue !== undefined ? getDueBadgeText(daysUntilDue) : null;
 
   return (
     <Card className={`p-4 ${!isActive ? 'opacity-60' : ''}`}>
@@ -70,9 +76,20 @@ const AccountItem = ({
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-medium truncate">{name}</p>
-            <p className="text-sm text-muted-foreground">
-              {categoryLabel} • Vence dia {dueDay}
-            </p>
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="text-sm text-muted-foreground">
+                {categoryLabel}
+              </p>
+              {badgeText ? (
+                <Badge variant="destructive" className="text-[10px] py-0 px-2 h-5">
+                  {badgeText}
+                </Badge>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  • Vence dia {dueDay}
+                </p>
+              )}
+            </div>
           </div>
         </div>
         
