@@ -34,8 +34,8 @@ const categoryIcons = {
 
 const categoryLabels = {
   salary: "Salário",
-  freelance: "Freelancer",
-  investment: "Investimento",
+  freelance: "Freela",
+  investment: "Invest",
   other_income: "Outros",
   food: "Comida",
   transport: "Transport",
