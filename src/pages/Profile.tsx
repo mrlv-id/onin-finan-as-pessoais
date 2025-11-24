@@ -24,6 +24,8 @@ const Profile = () => {
   } = useTheme();
   const [user, setUser] = useState<User | null>(null);
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
   useEffect(() => {
     const checkAuth = async () => {
       const {
@@ -37,6 +39,17 @@ const Profile = () => {
       }
       setUser(session.user);
       setName(session.user.user_metadata?.name || "");
+      
+      // Buscar telefone do perfil
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("phone")
+        .eq("user_id", session.user.id)
+        .single();
+      
+      if (profile?.phone) {
+        setPhone(profile.phone);
+      }
     };
     checkAuth();
     const {
@@ -53,6 +66,34 @@ const Profile = () => {
     });
     return () => subscription.unsubscribe();
   }, [navigate]);
+  const handleSaveProfile = async () => {
+    if (!user) return;
+    
+    setIsSaving(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ name, phone })
+        .eq("user_id", user.id);
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Perfil atualizado",
+        description: "Suas informações foram salvas com sucesso.",
+      });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast({
+        title: "Erro ao atualizar",
+        description: "Não foi possível salvar as alterações.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleLogout = async () => {
     await signOut();
     navigate("/");
@@ -77,6 +118,29 @@ const Profile = () => {
               <Label htmlFor="email">Email</Label>
               <Input id="email" value={user?.email || ""} disabled className="h-12" />
             </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="phone">Telefone (WhatsApp)</Label>
+              <Input 
+                id="phone" 
+                type="tel" 
+                placeholder="+55 11 99999-9999"
+                value={phone} 
+                onChange={e => setPhone(e.target.value)} 
+                className="h-12" 
+              />
+              <p className="text-xs text-muted-foreground">
+                Receba lembretes SMS quando suas contas estiverem próximas do vencimento
+              </p>
+            </div>
+
+            <Button 
+              onClick={handleSaveProfile} 
+              disabled={isSaving}
+              className="w-full h-12"
+            >
+              {isSaving ? "Salvando..." : "Salvar Alterações"}
+            </Button>
           </div>
         </div>
 
