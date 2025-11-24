@@ -109,6 +109,7 @@ const Wallet = () => {
           event: "*",
           schema: "public",
           table: "transactions",
+          filter: `user_id=eq.${userId}`
         },
         () => {
           fetchBalance();
@@ -120,6 +121,7 @@ const Wallet = () => {
           event: "*",
           schema: "public",
           table: "fixed_accounts",
+          filter: `user_id=eq.${userId}`
         },
         async () => {
           const { data } = await supabase
