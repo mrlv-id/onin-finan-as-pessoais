@@ -44,20 +44,25 @@ const SwipeableTransactionItem = ({
     const diff = startXRef.current - clientX;
     const newTranslateX = currentXRef.current + diff;
 
-    // Limitar o movimento entre 0 e MAX_SWIPE
+    // Permitir arrastar para abrir (0 até MAX_SWIPE) ou fechar (MAX_SWIPE até 0)
     if (newTranslateX >= 0 && newTranslateX <= MAX_SWIPE) {
       setTranslateX(newTranslateX);
+    } else if (newTranslateX < 0) {
+      setTranslateX(0);
+    } else if (newTranslateX > MAX_SWIPE) {
+      setTranslateX(MAX_SWIPE);
     }
   };
 
   const handleEnd = () => {
     setIsDragging(false);
-
-    // Se passou do threshold, manter aberto, senão fechar
-    if (translateX > SWIPE_THRESHOLD) {
-      setTranslateX(MAX_SWIPE);
-    } else {
+    
+    // Se moveu para a direita (fechando), fechar completamente
+    // Se moveu para a esquerda (abrindo), abrir completamente
+    if (translateX < 10) {
       setTranslateX(0);
+    } else {
+      setTranslateX(MAX_SWIPE);
     }
   };
 
