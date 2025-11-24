@@ -29,18 +29,18 @@ const FAB = () => {
             <Button
               size="lg"
               variant="secondary"
-              className="w-14 h-14 rounded-full shadow-lg"
+              className="h-12 px-6 rounded-full shadow-lg whitespace-nowrap"
               onClick={handleAddTransaction}
             >
-              <FileText className="w-5 h-5" />
+              Adicionar Transação
             </Button>
             <Button
               size="lg"
               variant="secondary"
-              className="w-14 h-14 rounded-full shadow-lg"
+              className="h-12 px-6 rounded-full shadow-lg whitespace-nowrap"
               onClick={handleAddAccount}
             >
-              <CreditCard className="w-5 h-5" />
+              Adicionar Conta Fixa
             </Button>
           </div>
         )}
