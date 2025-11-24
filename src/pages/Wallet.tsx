@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { useCache } from "@/contexts/CacheContext";
 import Navigation from "@/components/Navigation";
 import FAB from "@/components/FAB";
 import AccountCard from "@/components/AccountCard";
@@ -20,11 +21,12 @@ interface FixedAccount {
 
 const Wallet = () => {
   const navigate = useNavigate();
+  const { cache, updateCache } = useCache();
   const [period, setPeriod] = useState("7");
-  const [totalBalance, setTotalBalance] = useState(0);
-  const [accounts, setAccounts] = useState<FixedAccount[]>([]);
+  const [totalBalance, setTotalBalance] = useState(cache.totalBalance[period] || 0);
+  const [accounts, setAccounts] = useState<FixedAccount[]>(cache.fixedAccounts);
   const [userId, setUserId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!cache.fixedAccounts.length);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -66,10 +68,15 @@ const Wallet = () => {
           }
         }, 0);
         setTotalBalance(balance);
+        updateCache({ 
+          totalBalance: { ...cache.totalBalance, [period]: balance }
+        });
       }
 
       if (accountsResult.data) {
-        setAccounts(accountsResult.data as FixedAccount[]);
+        const fixedAccounts = accountsResult.data as FixedAccount[];
+        setAccounts(fixedAccounts);
+        updateCache({ fixedAccounts });
       }
       
       setIsLoading(false);
@@ -101,6 +108,9 @@ const Wallet = () => {
           }
         }, 0);
         setTotalBalance(balance);
+        updateCache({ 
+          totalBalance: { ...cache.totalBalance, [period]: balance }
+        });
       }
     };
 
@@ -134,7 +144,9 @@ const Wallet = () => {
             .order("due_day", { ascending: true });
           
           if (data) {
-            setAccounts(data as FixedAccount[]);
+            const fixedAccounts = data as FixedAccount[];
+            setAccounts(fixedAccounts);
+            updateCache({ fixedAccounts });
           }
         }
       )

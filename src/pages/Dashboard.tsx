@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { User } from "@supabase/supabase-js";
+import { useCache } from "@/contexts/CacheContext";
 import Navigation from "@/components/Navigation";
 import FAB from "@/components/FAB";
 import TransactionItem from "@/components/TransactionItem";
@@ -19,11 +20,12 @@ interface Transaction {
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { cache, updateCache } = useCache();
   const [user, setUser] = useState<User | null>(null);
   const [greeting, setGreeting] = useState("");
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [todayBalance, setTodayBalance] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [transactions, setTransactions] = useState<Transaction[]>(cache.recentTransactions);
+  const [todayBalance, setTodayBalance] = useState(cache.todayBalance);
+  const [isLoading, setIsLoading] = useState(!cache.recentTransactions.length);
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -63,7 +65,9 @@ const Dashboard = () => {
       ]);
 
       if (recentResult.data) {
-        setTransactions(recentResult.data as Transaction[]);
+        const recentTransactions = recentResult.data as Transaction[];
+        setTransactions(recentTransactions);
+        updateCache({ recentTransactions });
       }
       
       if (todayResult.data) {
@@ -75,6 +79,7 @@ const Dashboard = () => {
           }
         }, 0);
         setTodayBalance(balance);
+        updateCache({ todayBalance: balance });
       }
       
       setIsLoading(false);
@@ -115,7 +120,9 @@ const Dashboard = () => {
       ]);
 
       if (recentResult.data) {
-        setTransactions(recentResult.data as Transaction[]);
+        const recentTransactions = recentResult.data as Transaction[];
+        setTransactions(recentTransactions);
+        updateCache({ recentTransactions });
       }
       
       if (todayResult.data) {
@@ -127,6 +134,7 @@ const Dashboard = () => {
           }
         }, 0);
         setTodayBalance(balance);
+        updateCache({ todayBalance: balance });
       }
     };
 
