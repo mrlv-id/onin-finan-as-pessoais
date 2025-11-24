@@ -14,8 +14,8 @@ const categories = [
   { value: "phone", label: "Celular", icon: Smartphone },
   { value: "credit_card", label: "Cartão", icon: CreditCard },
   { value: "subscription", label: "Assinatura", icon: Tv },
-  { value: "bill", label: "Conta", icon: Building2 },
-  { value: "loan", label: "Empréstimo", icon: Droplet },
+  { value: "electricity", label: "Luz", icon: Zap },
+  { value: "water", label: "Água", icon: Droplet },
   { value: "other", label: "Outros", icon: MoreHorizontal },
 ];
 
