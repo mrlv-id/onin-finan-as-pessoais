@@ -8,8 +8,9 @@ import EditTransactionDrawer from "@/components/EditTransactionDrawer";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -159,6 +160,13 @@ const AllTransactions = () => {
           <h1 className="text-2xl font-bold">Todas as Transações</h1>
         </div>
 
+        <Alert>
+          <Info className="h-4 w-4" />
+          <AlertDescription>
+            Arraste uma transação para a esquerda para editar ou excluir
+          </AlertDescription>
+        </Alert>
+
         <div className="space-y-4">
           <Tabs value={typeFilter} onValueChange={(v) => setTypeFilter(v as any)} className="w-full">
             <TabsList className="grid w-full grid-cols-3">
@@ -219,10 +227,6 @@ const AllTransactions = () => {
             ))}
           </div>
         )}
-
-        <p className="text-sm text-center text-muted-foreground pt-4">
-          Arraste uma transação para a esquerda para editar ou excluir
-        </p>
       </div>
 
       <EditTransactionDrawer
