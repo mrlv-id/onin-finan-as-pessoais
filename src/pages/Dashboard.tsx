@@ -43,6 +43,18 @@ const Dashboard = () => {
         return;
       }
 
+      // Check if onboarding is completed
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("onboarding_completed")
+        .eq("user_id", session.user.id)
+        .single();
+
+      if (profile && !profile.onboarding_completed) {
+        navigate("/onboarding");
+        return;
+      }
+
       setUser(session.user);
 
       // Get today's date at 00:00:00
