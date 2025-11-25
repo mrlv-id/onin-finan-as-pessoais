@@ -54,8 +54,10 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
+          currency: string | null
           id: string
           name: string | null
+          onboarding_completed: boolean | null
           phone: string | null
           updated_at: string
           user_id: string
@@ -63,8 +65,10 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          currency?: string | null
           id?: string
           name?: string | null
+          onboarding_completed?: boolean | null
           phone?: string | null
           updated_at?: string
           user_id: string
@@ -72,8 +76,10 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           created_at?: string
+          currency?: string | null
           id?: string
           name?: string | null
+          onboarding_completed?: boolean | null
           phone?: string | null
           updated_at?: string
           user_id?: string

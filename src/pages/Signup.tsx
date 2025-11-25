@@ -30,10 +30,10 @@ const Signup = () => {
     } else {
       toast({
         title: "Conta criada!",
-        description: "Você será redirecionado em instantes...",
+        description: "Vamos configurar seu perfil...",
         duration: 1500,
       });
-      setTimeout(() => navigate("/dashboard"), 1500);
+      setTimeout(() => navigate("/onboarding"), 1500);
     }
 
     setLoading(false);
