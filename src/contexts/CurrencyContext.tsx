@@ -14,7 +14,7 @@ const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined
 
 const currencyConfig = {
   BRL: { symbol: "R$", locale: "pt-BR" },
-  USD: { symbol: "$", locale: "en-US" },
+  USD: { symbol: "US$", locale: "en-US" },
   EUR: { symbol: "€", locale: "de-DE" },
 };
 
