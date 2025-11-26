@@ -209,6 +209,7 @@ Deno.serve(async (req) => {
       // Send notification for each account
       for (const { account, daysUntilDue } of userAccounts) {
         let message: string;
+        let title = 'Lembrete de Conta';
         if (daysUntilDue === 0) {
           message = `Sua conta ${account.name} vence hoje!`;
         } else if (daysUntilDue === 1) {
@@ -217,11 +218,25 @@ Deno.serve(async (req) => {
           message = `Sua conta ${account.name} vence em ${daysUntilDue} dias`;
         }
 
+        // Save notification to history
+        const { error: notificationError } = await supabase
+          .from('notifications')
+          .insert({
+            user_id: userId,
+            title: title,
+            message: message,
+            is_read: false,
+          });
+
+        if (notificationError) {
+          console.error('Error saving notification:', notificationError);
+        }
+
         // Send to all user's subscriptions
         for (const subscription of subscriptions) {
           const sent = await sendPushNotification(
             subscription,
-            'Lembrete de Conta',
+            title,
             message
           );
           if (sent) {

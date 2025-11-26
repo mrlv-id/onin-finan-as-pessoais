@@ -9,6 +9,7 @@ import FAB from "@/components/FAB";
 import TransactionItem from "@/components/TransactionItem";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { NotificationsBell } from "@/components/NotificationsBell";
 
 interface Transaction {
   id: string;
@@ -178,11 +179,14 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen pb-20">
       <div className="container max-w-md mx-auto px-6 pt-8 space-y-8 animate-fade-in">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">
-            {greeting}, {userName}
-          </h1>
-          <p className="text-muted-foreground">Como estão suas finanças hoje?</p>
+        <div className="flex items-start justify-between">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold tracking-tight">
+              {greeting}, {userName}
+            </h1>
+            <p className="text-muted-foreground">Como estão suas finanças hoje?</p>
+          </div>
+          <NotificationsBell />
         </div>
 
         <Card className="p-6 space-y-2">
