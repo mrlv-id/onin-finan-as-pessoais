@@ -2,3 +2,8 @@ project_id = "vdzqpuwizbfcjwghfzdw"
 
 [functions.check-due-accounts]
 verify_jwt = false
+
+[functions.send-test-notification]
+
+[functions.get-vapid-key]
+verify_jwt = false

@@ -13,7 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { signOut } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "next-themes";
-import { Moon, Sun, Camera, Loader2, DollarSign } from "lucide-react";
+import { Moon, Sun, Camera, Loader2, DollarSign, Bell } from "lucide-react";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ImageCropDialog } from "@/components/ImageCropDialog";
@@ -228,6 +228,35 @@ const Profile = () => {
       description: "A moeda foi alterada com sucesso.",
     });
   };
+
+  const handleTestNotification = async () => {
+    if (!pushEnabled) {
+      toast({
+        title: "Notificações desativadas",
+        description: "Ative as notificações push primeiro.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase.functions.invoke('send-test-notification');
+      
+      if (error) throw error;
+
+      toast({
+        title: "Notificação enviada",
+        description: "Verifique sua notificação de teste!",
+      });
+    } catch (error) {
+      console.error('Error sending test notification:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível enviar a notificação de teste.",
+        variant: "destructive",
+      });
+    }
+  };
   const initials = name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
   return <div className="min-h-screen pb-20">
       <div className="container max-w-md mx-auto px-6 pt-8 space-y-8 animate-fade-in">
@@ -310,14 +339,27 @@ const Profile = () => {
             </Select>
           </div>
 
-          <div className="flex items-center justify-between p-4 rounded-lg border">
-            <div className="space-y-1">
-              <Label className="text-base font-medium">Notificações Push</Label>
-              <p className="text-xs text-muted-foreground">
-                Receba lembretes quando suas contas estiverem próximas do vencimento
-              </p>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-4 rounded-lg border">
+              <div className="space-y-1">
+                <Label className="text-base font-medium">Notificações Push</Label>
+                <p className="text-xs text-muted-foreground">
+                  Receba lembretes quando suas contas estiverem próximas do vencimento
+                </p>
+              </div>
+              <Switch checked={pushEnabled} onCheckedChange={togglePush} />
             </div>
-            <Switch checked={pushEnabled} onCheckedChange={togglePush} />
+            
+            {pushEnabled && (
+              <Button 
+                variant="outline" 
+                className="w-full h-12" 
+                onClick={handleTestNotification}
+              >
+                <Bell className="w-4 h-4 mr-2" />
+                Testar Notificação
+              </Button>
+            )}
           </div>
 
           <Button variant="outline" className="w-full h-12" onClick={handleLogout}>
