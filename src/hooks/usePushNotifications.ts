@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-const VAPID_PUBLIC_KEY = 'AAAABBBCCCDDDEEEFFF...';
-
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -20,6 +18,7 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 export const usePushNotifications = () => {
   const [isEnabled, setIsEnabled] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
+  const [vapidKey, setVapidKey] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -30,6 +29,17 @@ export const usePushNotifications = () => {
       }
 
       setIsSupported(true);
+
+      // Fetch VAPID public key
+      try {
+        const { data, error } = await supabase.functions.invoke('get-vapid-key');
+        if (error) throw error;
+        setVapidKey(data.publicKey);
+      } catch (error) {
+        console.error('Error fetching VAPID key:', error);
+        setIsSupported(false);
+        return;
+      }
 
       // Check if already enabled
       if (Notification.permission === 'granted') {
@@ -43,7 +53,7 @@ export const usePushNotifications = () => {
   }, []);
 
   const subscribe = async (): Promise<boolean> => {
-    if (!isSupported) {
+    if (!isSupported || !vapidKey) {
       toast({
         title: 'Não suportado',
         description: 'Seu navegador não suporta notificações push.',
@@ -71,7 +81,7 @@ export const usePushNotifications = () => {
       // Subscribe to push notifications
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as BufferSource,
+        applicationServerKey: urlBase64ToUint8Array(vapidKey) as BufferSource,
       });
 
       // Convert subscription to JSON
