@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import {
   Drawer,
   DrawerClose,
@@ -40,6 +41,7 @@ const AddAccountDrawer = ({ open, onOpenChange }: AddAccountDrawerProps) => {
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { currencySymbol } = useCurrency();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,7 +122,7 @@ const AddAccountDrawer = ({ open, onOpenChange }: AddAccountDrawerProps) => {
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               required
-              placeholder="0.00"
+              placeholder={`${currencySymbol} 0.00`}
             />
           </div>
 

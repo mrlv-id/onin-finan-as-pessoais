@@ -5,12 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ArrowRight, ArrowLeft, User, DollarSign, Camera } from "lucide-react";
 
 const Onboarding = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { setCurrency: setUserCurrency } = useCurrency();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -109,6 +111,9 @@ const Onboarding = () => {
         return;
       }
 
+      // Atualizar o contexto de moeda
+      setUserCurrency(currency as "BRL" | "USD" | "EUR");
+      
       setStep(3);
     } else if (step === 3) {
       await completeOnboarding();

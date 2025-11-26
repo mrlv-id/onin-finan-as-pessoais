@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { Home, Wifi, Smartphone, CreditCard, Tv, Zap, Droplet, MoreHorizontal } from "lucide-react";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -59,6 +60,7 @@ const AccountItem = ({
 }: AccountItemProps) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+  const { formatAmount } = useCurrency();
   const Icon = categoryIcons[category] || MoreHorizontal;
   const categoryLabel = categoryLabels[category] || "Outros";
   
@@ -126,7 +128,7 @@ const AccountItem = ({
         </div>
         <div className="text-right">
           <p className="font-semibold text-foreground">
-            R$ {amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            {formatAmount(amount)}
           </p>
         </div>
       </div>

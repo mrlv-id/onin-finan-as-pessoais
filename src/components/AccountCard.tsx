@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { Home, Wifi, Smartphone, CreditCard, Tv, Zap, Droplet, MoreHorizontal } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -59,6 +60,7 @@ const AccountCard = ({
   onToggleActive,
   onDelete,
 }: AccountCardProps) => {
+  const { formatAmount } = useCurrency();
   const Icon = categoryIcons[category] || MoreHorizontal;
   const categoryLabel = categoryLabels[category] || "Outros";
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -123,7 +125,7 @@ const AccountCard = ({
             )}
           </div>
           <p className="font-bold text-foreground">
-            R$ {amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            {formatAmount(amount)}
           </p>
         </div>
       </Card>
