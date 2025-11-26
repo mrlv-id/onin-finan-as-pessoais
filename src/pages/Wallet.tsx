@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useCache } from "@/contexts/CacheContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import Navigation from "@/components/Navigation";
 import FAB from "@/components/FAB";
 import AccountCard from "@/components/AccountCard";
@@ -20,10 +21,8 @@ interface FixedAccount {
 }
 const Wallet = () => {
   const navigate = useNavigate();
-  const {
-    cache,
-    updateCache
-  } = useCache();
+  const { cache, updateCache } = useCache();
+  const { formatAmount } = useCurrency();
   const [period, setPeriod] = useState("7");
   const [totalBalance, setTotalBalance] = useState(cache.totalBalance[period] || 0);
   const [accounts, setAccounts] = useState<FixedAccountWithDays[]>([]);
@@ -187,10 +186,7 @@ const Wallet = () => {
           <Card className="p-6 space-y-2">
             <p className="text-sm text-muted-foreground">Saldo consolidado</p>
             {isLoading ? <div className="h-10 w-48 bg-muted animate-pulse rounded" /> : <h2 className={`text-4xl font-bold ${totalBalance >= 0 ? 'text-foreground' : 'text-destructive'}`}>
-                R$ {totalBalance.toLocaleString('pt-BR', {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2
-            })}
+                {formatAmount(totalBalance)}
               </h2>}
           </Card>
 

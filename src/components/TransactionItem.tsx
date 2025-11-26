@@ -14,6 +14,7 @@ import {
   Smartphone,
   CreditCard
 } from "lucide-react";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 const categoryIcons = {
   salary: Briefcase,
@@ -58,6 +59,7 @@ interface TransactionItemProps {
 }
 
 const TransactionItem = ({ name, amount, category, type, date }: TransactionItemProps) => {
+  const { formatAmount } = useCurrency();
   const Icon = categoryIcons[category] || MoreHorizontal;
   const categoryLabel = categoryLabels[category] || "Outros";
   
@@ -74,7 +76,7 @@ const TransactionItem = ({ name, amount, category, type, date }: TransactionItem
       </div>
       <div className="text-right">
         <p className={`font-semibold ${type === "income" ? "text-muted-foreground" : "text-foreground"}`}>
-          {type === "income" ? "+" : "-"} R$ {amount.toFixed(2)}
+          {type === "income" ? "+" : "-"} {formatAmount(amount)}
         </p>
         <p className="text-xs text-muted-foreground">
           {new Date(date).toLocaleDateString("pt-BR")}

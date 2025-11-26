@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import {
   Drawer,
   DrawerClose,
@@ -69,6 +70,7 @@ const EditTransactionDrawer = ({ open, onOpenChange, transaction }: EditTransact
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { currencySymbol } = useCurrency();
 
   useEffect(() => {
     if (transaction) {
@@ -154,7 +156,7 @@ const EditTransactionDrawer = ({ open, onOpenChange, transaction }: EditTransact
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   required
-                  placeholder="0.00"
+                  placeholder={`${currencySymbol} 0.00`}
                 />
               </div>
 

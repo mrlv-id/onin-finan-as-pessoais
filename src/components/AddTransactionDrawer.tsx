@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import {
   Drawer,
   DrawerClose,
@@ -63,6 +64,7 @@ const AddTransactionDrawer = ({ open, onOpenChange }: AddTransactionDrawerProps)
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { currencySymbol } = useCurrency();
 
   const categories = type === "income" ? incomeCategories : expenseCategories;
 
@@ -152,7 +154,7 @@ const AddTransactionDrawer = ({ open, onOpenChange }: AddTransactionDrawerProps)
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   required
-                  placeholder="0.00"
+                  placeholder={`${currencySymbol} 0.00`}
                 />
               </div>
 

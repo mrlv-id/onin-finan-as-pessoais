@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { User } from "@supabase/supabase-js";
 import { useCache } from "@/contexts/CacheContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import Navigation from "@/components/Navigation";
 import FAB from "@/components/FAB";
 import TransactionItem from "@/components/TransactionItem";
@@ -21,6 +22,7 @@ interface Transaction {
 const Dashboard = () => {
   const navigate = useNavigate();
   const { cache, updateCache } = useCache();
+  const { formatAmount } = useCurrency();
   const [user, setUser] = useState<User | null>(null);
   const [greeting, setGreeting] = useState("");
   const [transactions, setTransactions] = useState<Transaction[]>(cache.recentTransactions);
@@ -189,7 +191,7 @@ const Dashboard = () => {
             <div className="h-10 w-48 bg-muted animate-pulse rounded" />
           ) : (
             <h2 className={`text-4xl font-bold ${todayBalance >= 0 ? 'text-foreground' : 'text-destructive'}`}>
-              R$ {todayBalance.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              {formatAmount(todayBalance)}
             </h2>
           )}
         </Card>
