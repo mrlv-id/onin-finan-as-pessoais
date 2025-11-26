@@ -16,6 +16,7 @@ import { useTheme } from "next-themes";
 import { Moon, Sun, Camera, Loader2, DollarSign } from "lucide-react";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ImageCropDialog } from "@/components/ImageCropDialog";
 const Profile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -26,6 +27,8 @@ const Profile = () => {
   const [name, setName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [cropDialogOpen, setCropDialogOpen] = useState(false);
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const nameTimeoutRef = useRef<NodeJS.Timeout>();
   const initialNameRef = useRef<string>("");
@@ -119,10 +122,28 @@ const Profile = () => {
       }
     };
   }, [name, user, toast]);
-  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!user || !event.target.files || event.target.files.length === 0) return;
+  const handleAvatarSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files || event.target.files.length === 0) return;
     
     const file = event.target.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = () => {
+      setImageToCrop(reader.result as string);
+      setCropDialogOpen(true);
+    };
+    
+    reader.readAsDataURL(file);
+    
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleCroppedImage = async (croppedImageBlob: Blob) => {
+    if (!user) return;
+    
     setIsUploading(true);
     
     try {
@@ -137,13 +158,15 @@ const Profile = () => {
       }
       
       // Upload new avatar
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
+      const fileName = `${Math.random()}.jpg`;
       const filePath = `${user.id}/${fileName}`;
       
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(filePath, file);
+        .upload(filePath, croppedImageBlob, {
+          contentType: 'image/jpeg',
+          upsert: true
+        });
       
       if (uploadError) throw uploadError;
       
@@ -231,7 +254,7 @@ const Profile = () => {
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={handleAvatarUpload}
+              onChange={handleAvatarSelect}
               disabled={isUploading}
             />
           </div>
@@ -305,6 +328,15 @@ const Profile = () => {
 
       <FAB />
       <Navigation />
+      
+      {imageToCrop && (
+        <ImageCropDialog
+          open={cropDialogOpen}
+          onOpenChange={setCropDialogOpen}
+          imageSrc={imageToCrop}
+          onCropComplete={handleCroppedImage}
+        />
+      )}
     </div>;
 };
 export default Profile;
