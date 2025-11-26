@@ -183,7 +183,7 @@ const Onboarding = () => {
 
   const currencyOptions = [
     { value: "BRL", label: "Real (R$)", symbol: "R$" },
-    { value: "USD", label: "Dólar ($)", symbol: "$" },
+    { value: "USD", label: "Dólar (US$)", symbol: "US$" },
     { value: "EUR", label: "Euro (€)", symbol: "€" },
   ];
 

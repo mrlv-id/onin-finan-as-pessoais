@@ -281,7 +281,7 @@ const Profile = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="BRL">Real (R$)</SelectItem>
-                <SelectItem value="USD">Dólar ($)</SelectItem>
+                <SelectItem value="USD">Dólar (US$)</SelectItem>
                 <SelectItem value="EUR">Euro (€)</SelectItem>
               </SelectContent>
             </Select>
