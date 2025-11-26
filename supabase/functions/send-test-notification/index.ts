@@ -43,6 +43,29 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Create service role client to insert notification
+    const supabaseServiceClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    const notificationTitle = '🎉 Notificação de Teste';
+    const notificationMessage = 'Suas notificações estão funcionando perfeitamente!';
+    
+    // Save notification to history
+    const { error: notificationError } = await supabaseServiceClient
+      .from('notifications')
+      .insert({
+        user_id: user.id,
+        title: notificationTitle,
+        message: notificationMessage,
+        is_read: false,
+      });
+
+    if (notificationError) {
+      console.error('Error saving notification:', notificationError);
+    }
+
     // Get user's push subscriptions
     const { data: subscriptions, error: subError } = await supabaseClient
       .from('push_subscriptions')
@@ -97,8 +120,8 @@ Deno.serve(async (req) => {
         };
 
         const payload = JSON.stringify({
-          title: '🎉 Notificação de Teste',
-          body: 'Suas notificações estão funcionando perfeitamente!',
+          title: notificationTitle,
+          body: notificationMessage,
           icon: '/pwa-192x192.png',
           badge: '/favicon.png',
         });
